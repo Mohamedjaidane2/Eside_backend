@@ -1,0 +1,32 @@
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+server:
+  port: 8090
+spring:
+  application:
+    name: auth-microservice
+  datasource:
+    url: jdbc:mysql://localhost:3306/eside-auth?createDatabaseIfNotExist=true&useSSL=true
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+application:
+  config:
+    account_url: http://localhost:8093/api/account
+
+springdoc:
+  packages-to-scan: com.eside.auth.controller
+  swagger-ui:
+    tryItOutEnabled : true
+    operations-sorter: method
+    tags-sorter: alpha
+    filter: true

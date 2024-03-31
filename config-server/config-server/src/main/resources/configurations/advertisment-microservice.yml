@@ -1,0 +1,30 @@
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+server:
+  port: 8095
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 250MB
+      max-request-size: 250MB
+  application:
+    name: advertisment-microservice
+  datasource:
+    url: jdbc:mysql://localhost:3306/eside-advertisment?createDatabaseIfNotExist=true&useSSL=true
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+flickr:
+  apiKey: a502dbde61b387599463907c23e642d9
+  apiSecret: 352dd78e9f5d20df
