@@ -5,6 +5,7 @@ import com.eside.auth.config.JwtService;
 import com.eside.auth.dtos.AuthenticationRequest;
 import com.eside.auth.dtos.AuthenticationResponse;
 import com.eside.auth.dtos.RegisterRequest;
+import com.eside.auth.dtos.UserDTO;
 import com.eside.auth.exception.EntityNotFoundException;
 import com.eside.auth.exception.InvalidOperationException;
 import com.eside.auth.externalData.Account;
@@ -83,7 +84,7 @@ public class AuthenticationService {
                 .LastName(request.getLastname())
                 .build());
     }
-    public User getCurrentUserInfo(String token) {
+    public UserDTO getCurrentUserInfo(String token) {
         String jwt = token.substring(7, token.length());
         logger.info("User's token: {}", jwt);
         String email = jwtService.extractUsername(jwt);
@@ -93,7 +94,14 @@ public class AuthenticationService {
             throw new EntityNotFoundException("User not found!");
 
         }
-        return user.get();
+        return UserDTO.builder()
+                .id(user.get().getId())
+                .firstName(user.get().getFirstName())
+                .lastName(user.get().getLastName())
+                .email(user.get().getUsername())
+                .accountId(user.get().getAccountId())
+                .role(user.get().getRole().getName()).build();
+
     }
 
     public Boolean isExpired(String token) {

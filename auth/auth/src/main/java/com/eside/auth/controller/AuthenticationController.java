@@ -3,6 +3,7 @@ package com.eside.auth.controller;
 import com.eside.auth.dtos.AuthenticationRequest;
 import com.eside.auth.dtos.AuthenticationResponse;
 import com.eside.auth.dtos.RegisterRequest;
+import com.eside.auth.dtos.UserDTO;
 import com.eside.auth.model.User;
 import com.eside.auth.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/get/info")
-    public ResponseEntity<User> getCurrentUserInfo(@RequestHeader(name = "Authorization") String token) {
+    public ResponseEntity<UserDTO> getCurrentUserInfo(@RequestHeader(name = "Authorization") String token) {
         return ResponseEntity.ok(service.getCurrentUserInfo(token));
     }
 
