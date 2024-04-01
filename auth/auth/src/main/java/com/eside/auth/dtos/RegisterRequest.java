@@ -1,4 +1,4 @@
-package com.eside.auth.controller;
+package com.eside.auth.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
