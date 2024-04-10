@@ -28,32 +28,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-gateway</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>com.github.yanceking</groupId>
-            <artifactId>exceptionmessage-spring-boot-starter</artifactId>
-            <version>1.1-personal</version>
-        </dependency>
-		<dependency>
-			<groupId>com.github.yanceking</groupId>
-			<artifactId>exceptionmessage-spring-boot-starter</artifactId>
-			<version>1.1-personal</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.yanceking</groupId>
-			<artifactId>exceptionmessage-spring-boot-starter</artifactId>
-			<version>1.1-personal</version>
+			<artifactId>spring-cloud-starter-gateway</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

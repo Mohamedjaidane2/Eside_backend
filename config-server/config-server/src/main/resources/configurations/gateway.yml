@@ -4,9 +4,8 @@ eureka:
 
 server:
   port: 8222
+
 spring:
-  application:
-    name: gateway
   cloud:
     gateway:
       discovery:
@@ -37,3 +36,5 @@ spring:
           uri: http://localhost:8094
           predicates:
             - Path= /api/bank-data/** , /api/transactions/** , /api/wallet/**
+  application:
+    name: gateway

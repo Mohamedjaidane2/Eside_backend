@@ -3,3 +3,8 @@ spring:
     name: auth-microservice
   config:
     import: optional:configserver:http://localhost:8888
+#CROS origin config
+eside:
+  saas:
+    cors:
+      cross-origins: http://localhost:4200
