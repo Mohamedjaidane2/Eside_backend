@@ -1,4 +1,4 @@
-package com.eside.advertisment.dtos.ProductDtos;
+package com.eside.advertisment.dtos.SubCategoryDtos;
 
 import com.eside.advertisment.enums.ColorEnum;
 import com.eside.advertisment.enums.ProductStatusEnum;
@@ -8,24 +8,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class ProductUpdateDto {
+public class SubCategoryUpdateDto {
 
-    private List<Image> images;
+    private String name;
 
-    private ProductStatusEnum ProductStatus;
+    private String description;
 
-    private ColorEnum color;
+    private Long CategoryId;
 
-    private String features;
-
-    private Long categoryId;
-
-    private Long SubcategoryId;
+    private Date creationDate;
 
 }

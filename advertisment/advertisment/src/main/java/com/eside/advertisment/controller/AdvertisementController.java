@@ -41,6 +41,24 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementDto);
     }
 
+    @GetMapping("/all/by/{categoryName}/{userAccoundId}")
+    //@ApiOperation(value = "Get advertisements by account")
+    public ResponseEntity<List<AdvertisementDto>> getAllBySubCategoryName(@PathVariable String categoryName,@PathVariable Long userAccoundId) {
+        List<AdvertisementDto> advertisements = advertisementService.getAllBySubCategoryName(categoryName,userAccoundId);
+        return ResponseEntity.ok(advertisements);
+    }
+    @GetMapping("/all/top/10/{accountId}")
+    //@ApiOperation(value = "Get advertisements by account")
+    public ResponseEntity<List<AdvertisementDto>> getTop10ByCreationDate(@PathVariable Long accountId) {
+        List<AdvertisementDto> advertisements = advertisementService.getTop10ByCreationDate(accountId);
+        return ResponseEntity.ok(advertisements);
+    }
+    @GetMapping("/all/recent/{accountId}")
+    //@ApiOperation(value = "Get advertisements by account")
+    public ResponseEntity<List<AdvertisementDto>> getALLByCreationDate(@PathVariable Long accountId) {
+        List<AdvertisementDto> advertisements = advertisementService.getALLByCreationDate(accountId);
+        return ResponseEntity.ok(advertisements);
+    }
     @GetMapping("/account/{accountId}")
     //@ApiOperation(value = "Get advertisements by account")
     public ResponseEntity<List<AdvertisementDto>> getAdvertisementByAccount(@PathVariable Long accountId) {

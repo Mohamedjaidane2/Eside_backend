@@ -22,12 +22,13 @@ public class ProductDto {
 
     private Long id;
 
-    //@ManyToOne
-    //@JoinColumn(name = "sub_category_id",nullable = false)
-    //private SubCategory subCategory;
     private List<Long> imageIds;
 
     private ProductStatusEnum ProductStatus;
+
+    private String categoryName;
+
+    private String SubcategoryName;
 
     private ColorEnum color;
 
@@ -43,6 +44,8 @@ public class ProductDto {
         }
         return ProductDto.builder()
                 .id(product.getId())
+                .categoryName(product.getSubCategory().getCategory().getName())
+                .SubcategoryName(product.getSubCategory().getName())
                 .imageIds(idsList)
                 .ProductStatus(product.getProductStatus())
                 .color(product.getColor())

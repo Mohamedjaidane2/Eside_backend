@@ -27,7 +27,7 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Advertisment advertisement;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Image> images;
 
     @Enumerated(EnumType.STRING)
@@ -37,6 +37,10 @@ public class Product {
     private ColorEnum color;
 
     private String features;
+
+    @ManyToOne
+    @JoinColumn(name = "subCategorie_id",nullable = true)
+    private SubCategory subCategory;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

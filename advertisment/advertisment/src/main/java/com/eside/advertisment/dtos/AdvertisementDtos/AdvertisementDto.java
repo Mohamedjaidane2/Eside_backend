@@ -29,6 +29,7 @@ public class AdvertisementDto {
     private Date creationDate;
     private Date updateDate;
     private Long userAccountId;
+    private String OwnerProfileName;
     private ProductDto product ;
     private Long orderId;
     public static AdvertisementDto customMapping(Advertisment advertisment) {

@@ -112,6 +112,14 @@ public class AdvertismentServiceImpl implements AdvertismentService {
     }
 
     @Override
+    public List<AdvertisementDto> getMyFeed(Long accountId) {
+        return advertismentRepository.findAllByUserAccountIdNot(accountId)
+                .stream()
+                .map(AdvertisementDto::customMapping)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public SuccessDto deleteAdvertisement(Long advertisementId) {
         Advertisment existingAdvertisement = advertismentRepository.findById(advertisementId)
                 .orElseThrow(()-> {
@@ -135,5 +143,29 @@ public class AdvertismentServiceImpl implements AdvertismentService {
         return SuccessDto.builder()
                 .message(SuccessMessage.STATUS_CHANGED)
                 .build();
+    }
+
+    @Override
+    public List<AdvertisementDto> getAllBySubCategoryName(String CategoryName,Long userAccoundId) {
+        return advertismentRepository.findAllByProduct_SubCategory_NameAndUserAccountIdNot(CategoryName,userAccoundId)
+                .stream()
+                .map(AdvertisementDto::customMapping)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AdvertisementDto> getTop10ByCreationDate(Long userAccoundId) {
+        return advertismentRepository.findTop10ByUserAccountIdNotOrderByCreationDateDesc(userAccoundId)
+                .stream()
+                .map(AdvertisementDto::customMapping)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AdvertisementDto> getALLByCreationDate(Long userAccoundId) {
+        return advertismentRepository.findByUserAccountIdNotOrderByCreationDateDesc(userAccoundId)
+                .stream()
+                .map(AdvertisementDto::customMapping)
+                .collect(Collectors.toList());
     }
 }

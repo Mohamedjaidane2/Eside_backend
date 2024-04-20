@@ -45,6 +45,9 @@ public class Advertisment {
     @JoinColumn(name = "owner_id")
     private Long userAccountId;
 
+    @JoinColumn(name = "owner_accountName")
+    private String ownerAccountName;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     private Product product;
