@@ -3,6 +3,7 @@ package com.eside.advertisment.service.impl;
 import com.eside.advertisment.dtos.CategoryDtos.CategoryDto;
 import com.eside.advertisment.dtos.CategoryDtos.CategoryNewDto;
 import com.eside.advertisment.dtos.CategoryDtos.CategoryUpdateDto;
+import com.eside.advertisment.dtos.ProductDtos.ProductDto;
 import com.eside.advertisment.dtos.SuccessDto;
 import com.eside.advertisment.enums.AdvertisementSoldStatusEnum;
 import com.eside.advertisment.enums.AdvertisementStatusEnum;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> findAll() {
-        return null;
+        return categoryRepository.findAll()
+                .stream()
+                .map(CategoryDto::customMapping)
+                .collect(Collectors.toList());
     }
 
     @Override

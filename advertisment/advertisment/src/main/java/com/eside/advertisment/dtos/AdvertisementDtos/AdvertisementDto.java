@@ -44,6 +44,7 @@ public class AdvertisementDto {
                 .creationDate(advertisment.getCreationDate())
                 .updateDate(advertisment.getUpdateDate())
                 .userAccountId(advertisment.getUserAccountId())
+                .OwnerProfileName(advertisment.getOwnerAccountName())
                 .product(ProductDto.customMapping(advertisment.getProduct()))
                 .orderId(advertisment.getOrderId())
                 .build();

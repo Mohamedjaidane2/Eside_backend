@@ -54,6 +54,7 @@ public class AdvertismentServiceImpl implements AdvertismentService {
                 .description(advertisementNewDto.getDescription())
                 .advertisementStatusEnum(AdvertisementStatusEnum.NO_VALUE)
                 .advertisementSoldStatusEnum(AdvertisementSoldStatusEnum.AVAILABLE)
+                .ownerAccountName(account.getAccountName())
                 .oldPrice(advertisementNewDto.getPrice())
                 .price(advertisementNewDto.getPrice())
                 .creationDate(new Date())

@@ -1,5 +1,6 @@
 package com.eside.advertisment.service.impl;
 
+import com.eside.advertisment.dtos.CategoryDtos.CategoryDto;
 import com.eside.advertisment.dtos.SubCategoryDtos.SubCategoryDto;
 import com.eside.advertisment.dtos.SubCategoryDtos.SubCategoryNewDto;
 import com.eside.advertisment.dtos.SubCategoryDtos.SubCategoryUpdateDto;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -34,7 +36,10 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public List<SubCategoryDto> findAll() {
-        return null;
+        return subCategoryRepository.findAll()
+                .stream()
+                .map(SubCategoryDto::customMapping)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.eside.advertisment.enums.ProductStatusEnum;
 import com.eside.advertisment.model.Category;
 import com.eside.advertisment.model.Image;
 import com.eside.advertisment.model.Product;
+import com.eside.advertisment.model.SubCategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,18 +29,18 @@ public class SubCategoryDto {
 
     private String description;
 
-    private List<Product> Products;
+    //private List<Product> Products;
 
-    private com.eside.advertisment.model.Category Category;
+    //private com.eside.advertisment.model.Category Category;
 
     private Date creationDate;
 
-    public static SubCategoryDto customMapping (Category category){
+    public static SubCategoryDto customMapping (SubCategory subcategory){
         return SubCategoryDto.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .description(category.getDescription())
-                .creationDate(category.getCreationDate())
+                .id(subcategory.getId())
+                .name(subcategory.getName())
+                .description(subcategory.getDescription())
+                .creationDate(subcategory.getCreationDate())
                 .build();
     }
 }

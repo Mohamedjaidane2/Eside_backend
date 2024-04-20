@@ -22,7 +22,7 @@ public class ProductDto {
 
     private Long id;
 
-    private List<Long> imageIds;
+    private List<String> imagePaths;
 
     private ProductStatusEnum ProductStatus;
 
@@ -38,15 +38,15 @@ public class ProductDto {
 
 
     public static ProductDto customMapping (Product product){
-        List<Long> idsList = new ArrayList<>();
+        List<String> pathsList = new ArrayList<>();
         for (Image image : product.getImages()){
-            idsList.add(image.getId());
+            pathsList.add(image.getPath());
         }
         return ProductDto.builder()
                 .id(product.getId())
                 .categoryName(product.getSubCategory().getCategory().getName())
                 .SubcategoryName(product.getSubCategory().getName())
-                .imageIds(idsList)
+                .imagePaths(pathsList)
                 .ProductStatus(product.getProductStatus())
                 .color(product.getColor())
                 .features(product.getFeatures())
