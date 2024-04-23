@@ -23,7 +23,7 @@ spring:
         - id: advertisment
           uri: http://localhost:8095
           predicates:
-            - Path= /api/advertisement/** , /api/image/** , /api/product/**
+            - Path= /api/advertisement/** , /api/image/** , /api/product/** , /api/subcategories/** , /api/categories/**
         - id: emailSender
           uri: http://localhost:8091
           predicates:

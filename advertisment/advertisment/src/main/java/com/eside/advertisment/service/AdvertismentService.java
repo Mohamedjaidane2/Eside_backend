@@ -4,8 +4,11 @@ import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementNewDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
 import com.eside.advertisment.dtos.SuccessDto;
 import com.eside.advertisment.model.Advertisment;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
+
 public interface AdvertismentService {
     SuccessDto postAdvertisement(AdvertisementNewDto advertisementNewDto);
 
@@ -16,13 +19,13 @@ public interface AdvertismentService {
     List<AdvertisementDto> getAdvertisementByAccount(Long accountId);
 
     List<AdvertisementDto> getAllAdvertisement();
-    List<AdvertisementDto> getMyFeed(Long accountId);
+    Map<String, Object> getMyFeed(Long accountId,int page , int size);
 
     SuccessDto deleteAdvertisement(Long advertisementId );
 
     SuccessDto changerAdvertismentStatusWhileOrdering(Long OrderId,Long advertismentId);
 
-    List<AdvertisementDto> getAllBySubCategoryName(String CategoryName,Long userAccoundId);
+    Map<String, Object> getAllBySubCategoryName(String CategoryName, Long userAccoundId ,int page , int size);
 
     List<AdvertisementDto> getTop10ByCreationDate(Long userAccoundId);
 

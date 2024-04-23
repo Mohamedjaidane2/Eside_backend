@@ -8,6 +8,7 @@ import com.eside.advertisment.dtos.SuccessDto;
 import com.eside.advertisment.enums.AdvertisementSoldStatusEnum;
 import com.eside.advertisment.enums.AdvertisementStatusEnum;
 import com.eside.advertisment.exception.EntityNotFoundException;
+import com.eside.advertisment.exception.InvalidOperationException;
 import com.eside.advertisment.externalData.Account;
 import com.eside.advertisment.model.Advertisment;
 import com.eside.advertisment.model.Product;
@@ -18,11 +19,12 @@ import com.eside.advertisment.utils.SuccessMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,11 +115,30 @@ public class AdvertismentServiceImpl implements AdvertismentService {
     }
 
     @Override
-    public List<AdvertisementDto> getMyFeed(Long accountId) {
-        return advertismentRepository.findAllByUserAccountIdNot(accountId)
-                .stream()
-                .map(AdvertisementDto::customMapping)
-                .collect(Collectors.toList());
+    public Map<String, Object> getMyFeed(Long accountId,int page , int size) {
+        try {
+            List<AdvertisementDto> advertisment = new ArrayList<AdvertisementDto>();
+            Pageable paging = PageRequest.of(page,size);
+            Page<Advertisment> pageAds;
+            if (accountId == null) {
+                //pageAds = advertismentRepository.findAll(paging);
+                return null;
+            }else {
+                pageAds = advertismentRepository.findAllByUserAccountIdNot(accountId, paging);
+                advertisment = pageAds.getContent().stream()
+                        .map(AdvertisementDto::customMapping)
+                        .collect(Collectors.toList());
+                Map<String,Object> response = new HashMap<>();
+                response.put("advertisments",advertisment);
+                response.put("currentPage",pageAds.getNumber());
+                response.put("totalItems",pageAds.getTotalElements());
+                response.put("totalPages",pageAds.getTotalPages());
+                return response;
+            }
+        }catch (Exception e ){
+            throw new InvalidOperationException("Invalid opération");
+
+        }
     }
 
     @Override
@@ -147,11 +168,34 @@ public class AdvertismentServiceImpl implements AdvertismentService {
     }
 
     @Override
-    public List<AdvertisementDto> getAllBySubCategoryName(String CategoryName,Long userAccoundId) {
-        return advertismentRepository.findAllByProduct_SubCategory_NameAndUserAccountIdNot(CategoryName,userAccoundId)
-                .stream()
-                .map(AdvertisementDto::customMapping)
-                .collect(Collectors.toList());
+    public Map<String, Object> getAllBySubCategoryName(String CategoryName, Long userAccoundId, int page , int size) {
+        try {
+        List<AdvertisementDto> advertisment = new ArrayList<AdvertisementDto>();
+        Pageable paging = PageRequest.of(page,size);
+        Page<Advertisment> pageAds;
+        if (CategoryName == null) {
+            //pageAds = advertismentRepository.findAll(paging);
+            return null;
+        }else {
+            pageAds = advertismentRepository.findAllByUserAccountIdNot(userAccoundId, paging);
+            advertisment = pageAds.getContent().stream()
+                    .map(AdvertisementDto::customMapping)
+                    .collect(Collectors.toList());
+            Map<String,Object> response = new HashMap<>();
+            response.put("advertisments",advertisment);
+            response.put("currentPage",pageAds.getNumber());
+            response.put("totalItems",pageAds.getTotalElements());
+            response.put("totalPages",pageAds.getTotalPages());
+            return response;
+        }
+        }catch (Exception e ){
+            throw new InvalidOperationException("Invalid opération");
+
+        }
+        //return advertismentRepository.findAllByProduct_SubCategory_NameAndUserAccountIdNot(CategoryName,userAccoundId)
+        //        .stream()
+        //        .map(AdvertisementDto::customMapping)
+        //        .collect(Collectors.toList());
     }
 
     @Override

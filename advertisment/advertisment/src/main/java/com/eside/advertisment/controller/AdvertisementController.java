@@ -6,10 +6,12 @@ import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
 import com.eside.advertisment.dtos.SuccessDto;
 import com.eside.advertisment.service.AdvertismentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 //@Api("/advertisement")
 @RequestMapping("/api/advertisement")
@@ -43,8 +45,14 @@ public class AdvertisementController {
 
     @GetMapping("/all/by/{categoryName}/{userAccoundId}")
     //@ApiOperation(value = "Get advertisements by account")
-    public ResponseEntity<List<AdvertisementDto>> getAllBySubCategoryName(@PathVariable String categoryName,@PathVariable Long userAccoundId) {
-        List<AdvertisementDto> advertisements = advertisementService.getAllBySubCategoryName(categoryName,userAccoundId);
+    public ResponseEntity<Map<String, Object>> getAllBySubCategoryName(
+            @PathVariable String categoryName,
+            @PathVariable Long userAccoundId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size
+
+    ) {
+        Map<String, Object> advertisements = advertisementService.getAllBySubCategoryName(categoryName,userAccoundId,page,size);
         return ResponseEntity.ok(advertisements);
     }
     @GetMapping("/all/top/10/{accountId}")
@@ -55,8 +63,12 @@ public class AdvertisementController {
     }
     @GetMapping("/all/recent/{accountId}")
     //@ApiOperation(value = "Get advertisements by account")
-    public ResponseEntity<List<AdvertisementDto>> getALLByCreationDate(@PathVariable Long accountId) {
-        List<AdvertisementDto> advertisements = advertisementService.getALLByCreationDate(accountId);
+    public ResponseEntity<Map<String, Object>> getALLByCreationDate(
+            @PathVariable Long accountId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size
+            ) {
+        Map<String, Object> advertisements = advertisementService.getMyFeed(accountId,page,size);
         return ResponseEntity.ok(advertisements);
     }
     @GetMapping("/account/{accountId}")
