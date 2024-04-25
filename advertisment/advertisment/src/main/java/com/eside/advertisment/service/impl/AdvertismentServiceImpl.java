@@ -4,6 +4,7 @@ import com.eside.advertisment.client.AccountClient;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementNewDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
+import com.eside.advertisment.dtos.FilterDto;
 import com.eside.advertisment.dtos.SuccessDto;
 import com.eside.advertisment.enums.AdvertisementSoldStatusEnum;
 import com.eside.advertisment.enums.AdvertisementStatusEnum;
@@ -15,13 +16,21 @@ import com.eside.advertisment.model.Product;
 import com.eside.advertisment.repository.AdvertismentRepository;
 import com.eside.advertisment.repository.ProductRepository;
 import com.eside.advertisment.service.AdvertismentService;
+import com.eside.advertisment.specification.AdvertismentSpecification;
 import com.eside.advertisment.utils.SuccessMessage;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -140,6 +149,29 @@ public class AdvertismentServiceImpl implements AdvertismentService {
 
         }
     }
+    @Override
+    public Map<String, Object> findAdvertisementsByFilter(List<FilterDto> filterDtoList, int page, int size) {
+        try {
+            Pageable paging = PageRequest.of(page, size);
+            Page<Advertisment> pageAds = advertismentRepository.findAll(AdvertismentSpecification.createSpecification(filterDtoList), paging);
+
+            List<AdvertisementDto> advertisment = pageAds.getContent().stream()
+                    .map(AdvertisementDto::customMapping)
+                    .collect(Collectors.toList());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("advertisments", advertisment);
+            response.put("currentPage", pageAds.getNumber());
+            response.put("totalItems", pageAds.getTotalElements());
+            response.put("totalPages", pageAds.getTotalPages());
+            return response;
+        } catch (Exception e) {
+            throw new InvalidOperationException("Invalid operation");
+        }
+    }
+
+
+
 
     @Override
     public SuccessDto deleteAdvertisement(Long advertisementId) {

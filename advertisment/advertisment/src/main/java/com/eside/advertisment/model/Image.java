@@ -28,6 +28,7 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(name = "product_id",nullable = true)
+    @JsonIgnore
     private Product product;
 
     @Override

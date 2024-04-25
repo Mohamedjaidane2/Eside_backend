@@ -3,6 +3,7 @@ package com.eside.advertisment.model;
 
 import com.eside.advertisment.enums.ColorEnum;
 import com.eside.advertisment.enums.ProductStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,9 @@ public class Category {
 
     private String description;
 
+
     @OneToMany(mappedBy = "Category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<SubCategory> subCategories;
 
     @CreationTimestamp

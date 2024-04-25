@@ -2,6 +2,7 @@ package com.eside.advertisment.service;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementNewDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
+import com.eside.advertisment.dtos.FilterDto;
 import com.eside.advertisment.dtos.SuccessDto;
 import com.eside.advertisment.model.Advertisment;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,8 @@ public interface AdvertismentService {
 
     List<AdvertisementDto> getAllAdvertisement();
     Map<String, Object> getMyFeed(Long accountId,int page , int size);
+
+    Map<String, Object> findAdvertisementsByFilter(List<FilterDto> filterDTOList,int page , int size);
 
     SuccessDto deleteAdvertisement(Long advertisementId );
 

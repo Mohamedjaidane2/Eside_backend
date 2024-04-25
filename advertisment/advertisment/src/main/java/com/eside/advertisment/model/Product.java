@@ -2,6 +2,9 @@ package com.eside.advertisment.model;
 
 import com.eside.advertisment.enums.ColorEnum;
 import com.eside.advertisment.enums.ProductStatusEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +21,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Table(name = "product")
+
+
 public class Product {
 
     @Id
@@ -25,6 +30,7 @@ public class Product {
     private Long id;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Advertisment advertisement;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

@@ -2,6 +2,8 @@ package com.eside.advertisment.model;
 
 import com.eside.advertisment.enums.AdvertisementSoldStatusEnum;
 import com.eside.advertisment.enums.AdvertisementStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

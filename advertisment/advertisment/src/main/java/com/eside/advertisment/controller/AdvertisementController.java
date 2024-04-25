@@ -3,7 +3,9 @@ package com.eside.advertisment.controller;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementNewDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
+import com.eside.advertisment.dtos.FilterDto;
 import com.eside.advertisment.dtos.SuccessDto;
+import com.eside.advertisment.model.Advertisment;
 import com.eside.advertisment.service.AdvertismentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -82,6 +84,14 @@ public class AdvertisementController {
    // @ApiOperation(value = "Get all advertisements")
     public ResponseEntity<List<AdvertisementDto>> getAllAdvertisements() {
         List<AdvertisementDto> advertisements = advertisementService.getAllAdvertisement();
+        return ResponseEntity.ok(advertisements);
+    }
+    @PostMapping("/all/byFilter")
+    public ResponseEntity<Map<String, Object>> getAllAdvertisementsByFilter(
+            @RequestBody List<FilterDto> filterDTOList,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Map<String, Object> advertisements = advertisementService.findAdvertisementsByFilter(filterDTOList, page, size);
         return ResponseEntity.ok(advertisements);
     }
 
