@@ -40,6 +40,9 @@ public class  AdvertismentSpecification{
                 if (columnName.equals("category")) {
                     return root.join("product").join("subCategory").join("Category").get("name");
                 }
+                if (columnName.equals("subCategory")) {
+                    return root.join("product").join("subCategory").get("name");
+                }
                 if ("productStatus".equals(columnName)) {
                     return root.join("product").get("productStatus");
                 } if ("color".equals(columnName)) {
