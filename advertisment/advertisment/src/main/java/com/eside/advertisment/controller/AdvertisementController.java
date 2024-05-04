@@ -5,6 +5,7 @@ import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementNewDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
 import com.eside.advertisment.dtos.FilterDto;
 import com.eside.advertisment.dtos.SuccessDto;
+import com.eside.advertisment.enums.AdvertisementStatusEnum;
 import com.eside.advertisment.model.Advertisment;
 import com.eside.advertisment.service.AdvertismentService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,11 @@ public class AdvertisementController {
     public ResponseEntity<SuccessDto> updateAdvertisement(@RequestBody AdvertisementUpdateDtos advertisementUpdateDto,Long advertisementId) {
         return ResponseEntity.ok(advertisementService.updateAdvertisement(advertisementUpdateDto,advertisementId));
     }
+    @PutMapping("/change-status/{Id}/{advertisementStatusEnum}")
+   // @ApiOperation(value = "Update advertisement")
+    public ResponseEntity<SuccessDto> aprouveOrDecline(@PathVariable Long Id, @PathVariable AdvertisementStatusEnum advertisementStatusEnum) {
+        return ResponseEntity.ok(advertisementService.checkAdsAndChangeStatus(Id,advertisementStatusEnum));
+    }
     @PutMapping("/updateWhileOrder/{OrderId}/{advertisementId}")
    // @ApiOperation(value = "Update advertisement")
     public ResponseEntity<SuccessDto> changerAdvertismentStatusWhileOrdering(@PathVariable Long OrderId, @PathVariable Long advertisementId) {
@@ -57,10 +63,29 @@ public class AdvertisementController {
         Map<String, Object> advertisements = advertisementService.getAllBySubCategoryName(categoryName,userAccoundId,page,size);
         return ResponseEntity.ok(advertisements);
     }
+    @GetMapping("/all/top/10/subcategory/{accountId}/{subcategoryName}")
+    //@ApiOperation(value = "Get advertisements by account")
+    public ResponseEntity<List<AdvertisementDto>> getTop10BySubCategoryWithAuth(@PathVariable Long accountId,@PathVariable String subcategoryName) {
+        List<AdvertisementDto> advertisements = advertisementService.getTop10BySubCategoryNamewithAuth(subcategoryName,accountId);
+        return ResponseEntity.ok(advertisements);
+    }
+    @GetMapping("/all/top/10/subcategory/no-auth/{subcategoryName}")
+    //@ApiOperation(value = "Get advertisements by account")
+    public ResponseEntity<List<AdvertisementDto>> getTop10BySubCategoryNoAuth(@PathVariable String subcategoryName) {
+        List<AdvertisementDto> advertisements = advertisementService.getTop10BySubCategoryNameNoAuth(subcategoryName);
+        return ResponseEntity.ok(advertisements);
+    }
+
     @GetMapping("/all/top/10/{accountId}")
     //@ApiOperation(value = "Get advertisements by account")
     public ResponseEntity<List<AdvertisementDto>> getTop10ByCreationDate(@PathVariable Long accountId) {
         List<AdvertisementDto> advertisements = advertisementService.getTop10ByCreationDate(accountId);
+        return ResponseEntity.ok(advertisements);
+    }
+    @GetMapping("/all/top/10/no-auth")
+    //@ApiOperation(value = "Get advertisements by account")
+    public ResponseEntity<List<AdvertisementDto>> getTop10ByCreationDateNoAuth() {
+        List<AdvertisementDto> advertisements = advertisementService.getTop10ByCreationDateNoAuth();
         return ResponseEntity.ok(advertisements);
     }
     @GetMapping("/all/recent/{accountId}")
@@ -80,6 +105,12 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisements);
     }
 
+    @GetMapping("/gellery/{accountId}")
+    //@ApiOperation(value = "Get advertisements by account")
+    public ResponseEntity<List<AdvertisementDto>> getGallery(@PathVariable Long accountId) {
+        List<AdvertisementDto> advertisements = advertisementService.getGallery(accountId);
+        return ResponseEntity.ok(advertisements);
+    }
     @GetMapping("/all")
    // @ApiOperation(value = "Get all advertisements")
     public ResponseEntity<List<AdvertisementDto>> getAllAdvertisements() {

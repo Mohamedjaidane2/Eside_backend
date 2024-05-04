@@ -18,21 +18,13 @@ import com.eside.advertisment.repository.ProductRepository;
 import com.eside.advertisment.service.AdvertismentService;
 import com.eside.advertisment.specification.AdvertismentSpecification;
 import com.eside.advertisment.utils.SuccessMessage;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -110,6 +102,12 @@ public class AdvertismentServiceImpl implements AdvertismentService {
     }
 
     @Override
+    public List<AdvertisementDto> getGallery(Long accountId) {
+        List<Advertisment> Advertisements = advertismentRepository.findByUserAccountIdAndAdvertisementStatusEnum(accountId,AdvertisementStatusEnum.ACCEPTED);
+        return AdvertisementDto.customListMapping(Advertisements);
+    }
+
+    @Override
     public List<AdvertisementDto> getAdvertisementByAccount(Long accountId) {
         List<Advertisment> Advertisements = advertismentRepository.findByUserAccountId(accountId);
         return AdvertisementDto.customListMapping(Advertisements);
@@ -133,7 +131,7 @@ public class AdvertismentServiceImpl implements AdvertismentService {
                 //pageAds = advertismentRepository.findAll(paging);
                 return null;
             }else {
-                pageAds = advertismentRepository.findAllByUserAccountIdNot(accountId, paging);
+                pageAds = advertismentRepository.findAllByUserAccountIdNotAndAdvertisementStatusEnum(accountId, paging , AdvertisementStatusEnum.ACCEPTED);
                 advertisment = pageAds.getContent().stream()
                         .map(AdvertisementDto::customMapping)
                         .collect(Collectors.toList());
@@ -170,7 +168,19 @@ public class AdvertismentServiceImpl implements AdvertismentService {
         }
     }
 
-
+    @Override
+    public SuccessDto checkAdsAndChangeStatus(Long id,AdvertisementStatusEnum advertisementStatusEnum) {
+        Advertisment existingAdvertisement = advertismentRepository.findById(id)
+                .orElseThrow(()-> {
+                            throw  new EntityNotFoundException("Advertisement not found");
+                        }
+                );
+        existingAdvertisement.setAdvertisementStatusEnum(advertisementStatusEnum);
+        advertismentRepository.save(existingAdvertisement);
+        return SuccessDto.builder()
+                .message(SuccessMessage.STATUS_CHANGED)
+                .build();
+    }
 
 
     @Override
@@ -209,7 +219,7 @@ public class AdvertismentServiceImpl implements AdvertismentService {
             //pageAds = advertismentRepository.findAll(paging);
             return null;
         }else {
-            pageAds = advertismentRepository.findAllByUserAccountIdNot(userAccoundId, paging);
+            pageAds = advertismentRepository.findAllByUserAccountIdNotAndAdvertisementStatusEnum(userAccoundId, paging, AdvertisementStatusEnum.ACCEPTED);
             advertisment = pageAds.getContent().stream()
                     .map(AdvertisementDto::customMapping)
                     .collect(Collectors.toList());
@@ -231,8 +241,33 @@ public class AdvertismentServiceImpl implements AdvertismentService {
     }
 
     @Override
+    public List<AdvertisementDto> getTop10BySubCategoryNameNoAuth(String CategoryName) {
+        return advertismentRepository.findTop10ByProduct_SubCategory_NameAndAdvertisementStatusEnumOrderByCreationDateDesc(CategoryName,AdvertisementStatusEnum.ACCEPTED)
+                .stream()
+                .map(AdvertisementDto::customMapping)
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<AdvertisementDto> getTop10BySubCategoryNamewithAuth(String CategoryName, Long userAccoundId) {
+        return advertismentRepository.findTop10ByProduct_SubCategory_NameAndUserAccountIdNotAndAdvertisementStatusEnumOrderByCreationDateDesc(CategoryName,userAccoundId,AdvertisementStatusEnum.ACCEPTED)
+                .stream()
+                .map(AdvertisementDto::customMapping)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<AdvertisementDto> getTop10ByCreationDate(Long userAccoundId) {
-        return advertismentRepository.findTop10ByUserAccountIdNotOrderByCreationDateDesc(userAccoundId)
+        return advertismentRepository.findTop10ByUserAccountIdNotAndAdvertisementStatusEnumOrderByCreationDateDesc(userAccoundId,AdvertisementStatusEnum.ACCEPTED)
+                .stream()
+                .map(AdvertisementDto::customMapping)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AdvertisementDto> getTop10ByCreationDateNoAuth() {
+        return advertismentRepository.findTop10ByAdvertisementStatusEnumOrderByCreationDateDesc(AdvertisementStatusEnum.ACCEPTED)
                 .stream()
                 .map(AdvertisementDto::customMapping)
                 .collect(Collectors.toList());
@@ -240,7 +275,7 @@ public class AdvertismentServiceImpl implements AdvertismentService {
 
     @Override
     public List<AdvertisementDto> getALLByCreationDate(Long userAccoundId) {
-        return advertismentRepository.findByUserAccountIdNotOrderByCreationDateDesc(userAccoundId)
+        return advertismentRepository.findByUserAccountIdNotAndAdvertisementStatusEnumOrderByCreationDateDesc(userAccoundId,AdvertisementStatusEnum.ACCEPTED)
                 .stream()
                 .map(AdvertisementDto::customMapping)
                 .collect(Collectors.toList());

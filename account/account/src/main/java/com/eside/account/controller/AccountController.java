@@ -41,9 +41,9 @@ public class AccountController {
         return ResponseEntity.ok(accountService.ReactivateAccountById(id));
     }
 
-    @PostMapping("/get/id")
-    //@ApiOperation(value = "Get account by id")
-    public ResponseEntity<AccountDto> getById(@RequestBody Long id) {
+    @GetMapping("/get/{id}")
+//@ApiOperation(value = "Get account by id")
+    public ResponseEntity<AccountDto> getById(@PathVariable Long id) {
         AccountDto accountDto = accountService.getAccountById(id);
         return ResponseEntity.ok(accountDto);
     }

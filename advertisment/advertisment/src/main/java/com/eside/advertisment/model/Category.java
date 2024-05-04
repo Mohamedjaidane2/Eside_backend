@@ -29,7 +29,7 @@ public class Category {
     private String description;
 
 
-    @OneToMany(mappedBy = "Category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "Category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private List<SubCategory> subCategories;
 

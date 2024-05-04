@@ -2,7 +2,9 @@ package com.eside.advertisment.controller;
 
 import com.eside.advertisment.dtos.ImagesDtos.ImageDto;
 import com.eside.advertisment.dtos.ImagesDtos.ImageNewDto;
+import com.eside.advertisment.dtos.ImagesDtos.ImageResponseDto;
 import com.eside.advertisment.dtos.SuccessDto;
+import com.eside.advertisment.exception.InvalidOperationException;
 import com.eside.advertisment.model.Image;
 import com.eside.advertisment.service.impl.ImageServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +24,26 @@ public class ImageController {
 
     private final ImageServiceImpl imageService;
 
+    @PostMapping("/upload/firebase/")
+    public ResponseEntity<ImageResponseDto> upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+
+            return ResponseEntity.ok(imageService.upload(multipartFile));
+
+    }
     @PostMapping("/upload/")
     public ResponseEntity<SuccessDto> uploadImage(@RequestBody ImageNewDto image)  {
         return ResponseEntity.status(HttpStatus.OK).body(imageService.uploadImage(image));
     }
 
     @GetMapping("/get-by-path/{filePath}") // Updated mapping to /download/{fileName}
-    public ResponseEntity<?> downloadImage(@PathVariable String filePath) {
+    public ResponseEntity<?> getByPath(@PathVariable String filePath) {
         ImageDto imageData = imageService.getImageByPath(filePath);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(imageData);
+    }
+    @GetMapping("/get-by-name/{name}") // Updated mapping to /download/{fileName}
+    public ResponseEntity<?> getByName(@PathVariable String name) {
+        ImageDto imageData = imageService.getImageByName(name);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(imageData);
     }

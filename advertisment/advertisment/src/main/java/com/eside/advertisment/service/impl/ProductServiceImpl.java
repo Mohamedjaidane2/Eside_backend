@@ -52,17 +52,23 @@ public class ProductServiceImpl implements ProductService {
                 .subCategory(subCategory)
                 .creationDate(new Date())
                 .build();
+
         List<Image> imageList = new ArrayList<>();
-        for(Long imageId : productNewDto.getImages()){
-            Image searchedImage = imageRepository.findById(imageId)
+
+        product = iProductRepository.save(product);
+
+// Then associate images with the product
+        for(String imageId : productNewDto.getImages()){
+            Image searchedImage = imageRepository.findByName(imageId)
                     .orElseThrow(()-> new EntityNotFoundException("Image not found"));
             searchedImage.setProduct(product);
             imageRepository.save(searchedImage);
         }
+
         product.setImages(imageList);
         iProductRepository.save(product);
-        return ProductDto.customMapping(product);
 
+        return ProductDto.customMapping(product);
     }
 
     @Override

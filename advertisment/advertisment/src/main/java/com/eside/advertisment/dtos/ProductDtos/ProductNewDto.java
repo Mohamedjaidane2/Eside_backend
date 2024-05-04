@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 public class ProductNewDto {
 
-    private List<Long> images;
+    private List<String> images;
 
     private ProductStatusEnum ProductStatus;
 

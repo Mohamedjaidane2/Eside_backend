@@ -29,6 +29,7 @@ public class SubCategoryDto {
 
     private String description;
 
+    //private Category category;
     //private List<Product> Products;
 
     //private com.eside.advertisment.model.Category Category;
@@ -43,4 +44,14 @@ public class SubCategoryDto {
                 .creationDate(subcategory.getCreationDate())
                 .build();
     }
+    public static List<SubCategoryDto> customListMapping(List<SubCategory> subCategories) {
+        if (subCategories == null) return null;
+        List<SubCategoryDto> subCategoryDtoList = new ArrayList<>();
+        for (SubCategory subCategory : subCategories) {
+            SubCategoryDto subCategoryDto = customMapping(subCategory);
+            subCategoryDtoList.add(subCategoryDto);
+        }
+        return subCategoryDtoList;
+    }
+
 }
