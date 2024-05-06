@@ -33,6 +33,8 @@ public class InformationDto {
 
     private String accountName;
 
+    private Long accountId;
+
     public static InformationDto customMapping(Information information) {
         return InformationDto.builder()
                 .id(information.getId())
@@ -46,6 +48,7 @@ public class InformationDto {
                 .creationDate(information.getCreationDate())
                 .updateDate(information.getUpdateDate())
                 .accountName(information.getAccount().getAccountName())
+                .accountId(information.getAccount().getId())
                 .build();
     }
 }

@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public SuccessDto toOrder(Long accountId, Long advertisementId) {
+    public OrderDto toOrder(Long accountId, Long advertisementId) {
         Account account = new Account();
         Advertisment advertisment = new Advertisment();
         try {
@@ -60,9 +60,9 @@ public class OrderServiceImpl implements OrderService {
             throw new InvalidOperationException("You can't place an order on your own advertisement");
         }
 
-        if (advertisment.getOrderId() != null) {
-            throw new InvalidOperationException("Someone else has already ordered this advertisement");
-        }
+        //if (advertisment.getOrderId() != null) {
+        //    throw new InvalidOperationException("Someone else has already ordered this advertisement");
+        //}
 
         // Create a new Order using the builder pattern
         Order order = Order.builder()
@@ -75,18 +75,7 @@ public class OrderServiceImpl implements OrderService {
         // Save the created Order
         orderRepository.save(order);
 
-        advertisment.setAdvertisementSoldStatusEnum(AdvertisementSoldStatusEnum.IN_PROGRESS);
-        try {
-            advertisment= advertismentClient.UpdateAdvertismentStatusFromOrder(order.getOrderId(),advertisementId);
-            System.out.println("our output  " + advertisment);
-        }catch (Exception e){
-            throw e ;
-        }
-
-
-        return SuccessDto.builder()
-                .message("Order placed successfully")
-                .build();
+        return OrderDto.customMapping(order);
     }
 
     @Override
@@ -112,6 +101,32 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
         return SuccessDto.builder()
                 .message("Order placed Cancelled !")
+                .build();
+    }
+
+    @Override
+    public SuccessDto confirmOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new EntityNotFoundException("Order not found")
+                );
+        Advertisment advertisment = new Advertisment();
+        try {
+            advertisment= advertismentClient.getAdvertismentByIdFromOrder(order.getAdvertisementId());
+            System.out.println("our advertisment " + advertisment);
+        }catch (Exception e){
+            throw e ;
+        }
+        advertisment.setAdvertisementSoldStatusEnum(AdvertisementSoldStatusEnum.IN_PROGRESS);
+        try {
+            advertisment= advertismentClient.UpdateAdvertismentStatusFromOrder(order.getOrderId(),order.getAdvertisementId());
+            System.out.println("our output  " + advertisment);
+        }catch (Exception e){
+            throw e ;
+        }
+        order.setOrderStatus(OrderStatusEnum.AWAITING_PROCESSING);
+        orderRepository.save(order);
+        return SuccessDto.builder()
+                .message("Order Confirmed successfully !")
                 .build();
     }
 

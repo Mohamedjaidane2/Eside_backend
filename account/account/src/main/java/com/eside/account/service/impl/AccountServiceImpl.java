@@ -6,9 +6,12 @@ import com.eside.account.dtos.SuccessDto;
 import com.eside.account.exception.EntityNotFoundException;
 import com.eside.account.exception.InvalidOperationException;
 import com.eside.account.model.Account;
+import com.eside.account.model.Information;
 import com.eside.account.repository.AccountRepository;
+import com.eside.account.repository.InformationRepository;
 import com.eside.account.service.AccountService;
 import com.eside.account.utils.SuccessMessage;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,13 +26,44 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService {
     private final ModelMapper modelMapper;
     private final AccountRepository accountRepository;
+    private final InformationRepository informationRepository;
     @Override
+    @Transactional
     public Account createAccount(NewAccountDto newAccountDto) {
         String baseAccountName = newAccountDto.getFirstName() + "_" + newAccountDto.getLastName();
         String accountName = generateUniqueAccountName(baseAccountName);
-        Account newAccount = Account.builder().accountName(accountName).creationDate(new Date()).isActive(true).firstName(newAccountDto.getFirstName()).lastName(newAccountDto.getLastName()).build();
-        accountRepository.save(newAccount);
+
+        Account newAccount = Account.builder()
+                .accountName(accountName)
+                .creationDate(new Date())
+                .isActive(true)
+                .firstName(newAccountDto.getFirstName())
+                .lastName(newAccountDto.getLastName())
+                .build();
+
+        Information emptyInfo = createEmptyInformation(newAccount);
+
         return newAccount;
+    }
+
+    private Information createEmptyInformation(Account newAccount) {
+        Information emptyInfo = Information.builder()
+                .city("")
+                .account(newAccount)
+                .address("")
+                .bio("")
+                .creationDate(new Date())
+                .phoneNumber("")
+                .optionalAddress("")
+                .profilePicture("")
+                .build();
+
+        newAccount.setInformation(emptyInfo);
+
+        accountRepository.save(newAccount);
+        informationRepository.save(emptyInfo);
+
+        return emptyInfo;
     }
 
     private String generateUniqueAccountName(String baseAccountName) {

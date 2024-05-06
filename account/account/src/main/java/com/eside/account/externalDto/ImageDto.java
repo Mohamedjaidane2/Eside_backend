@@ -9,6 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class ImageResponseDto {
+public class ImageDto {
+    private Long id;
+
     private String name;
+
+    private String type;
+
+    private String path;
+
 }

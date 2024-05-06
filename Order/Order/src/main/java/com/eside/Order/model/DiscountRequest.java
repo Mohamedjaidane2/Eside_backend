@@ -22,13 +22,12 @@ public class DiscountRequest {
     private Long id ;
 
     @OneToOne()
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = true)
     private Order order;
 
     private double requestedAmount;
 
     @Enumerated(EnumType.STRING)
-
     private DiscountRequestStatus eDiscountRequestStats;
 
     private double counterDiscountAmount;

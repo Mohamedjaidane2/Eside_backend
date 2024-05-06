@@ -19,7 +19,7 @@ public class OrderController {
     private final OrderServiceImpl orderService;
 
     @PostMapping("/create/{accountId}/{advertisementId}")
-    public ResponseEntity<SuccessDto> createOrder(@PathVariable Long accountId, @PathVariable Long advertisementId) {
+    public ResponseEntity<OrderDto> createOrder(@PathVariable Long accountId, @PathVariable Long advertisementId) {
         return ResponseEntity.ok(orderService.toOrder(accountId, advertisementId));
     }
 

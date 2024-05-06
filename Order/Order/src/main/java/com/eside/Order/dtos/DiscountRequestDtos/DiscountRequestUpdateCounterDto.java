@@ -13,7 +13,6 @@ import java.util.Date;
 @Builder
 @Data
 public class DiscountRequestUpdateCounterDto {
-
     private Long orderId;
     private double counterDiscountAmount;
 }

@@ -1,5 +1,6 @@
 package com.eside.account.service.impl;
 
+import com.eside.account.client.ImageClient;
 import com.eside.account.dtos.FeedBackDtos.FeedBackDto;
 import com.eside.account.dtos.InformationDtos.InformationDto;
 import com.eside.account.dtos.InformationDtos.InformationNewDto;
@@ -7,6 +8,7 @@ import com.eside.account.dtos.InformationDtos.InformationUpdateDto;
 import com.eside.account.dtos.SuccessDto;
 import com.eside.account.exception.EntityNotFoundException;
 import com.eside.account.exception.InvalidOperationException;
+import com.eside.account.externalDto.ImageDto;
 import com.eside.account.model.Account;
 import com.eside.account.model.FeedBack;
 import com.eside.account.model.Information;
@@ -17,6 +19,7 @@ import com.eside.account.service.InformationService;
 import com.eside.account.utils.SuccessMessage;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -29,6 +32,8 @@ public class InformationServiceImpl implements InformationService {
     private final InformationRepository informationRepository;
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
+    @Autowired
+    private ImageClient imageClient;
     @Override
     public SuccessDto addInformation(InformationNewDto informationNewDto) {
         Account account = accountRepository.findById(informationNewDto.getAccountId())
@@ -62,10 +67,28 @@ public class InformationServiceImpl implements InformationService {
 
     @Override
     public SuccessDto updateInformation(InformationUpdateDto informationUpdateDto, Long infoId) {
+
+        //TODO Return Image from OpenFiegen Path +++++++
+        // TODO use try catch and check if profile picture not null
+        // TODO the use external api using Open feigen
+        // TODO the use external api using Open feigen
+
         Information information = informationRepository.findById(infoId)
                 .orElseThrow(() -> new EntityNotFoundException("Information not found"));
+        if(informationUpdateDto.getProfilePicture()!=null){
+        ImageDto image = imageClient.getByNameFromAccount(informationUpdateDto.getProfilePicture());
+        information.setProfilePicture(image.getPath());
 
-        modelMapper.map(informationUpdateDto, information);
+        }
+
+        //modelMapper.map(informationUpdateDto, information);
+        information.setAddress(informationUpdateDto.getAddress());
+        information.setOptionalAddress(informationUpdateDto.getOptionalAddress());
+        information.setPhoneNumber(informationUpdateDto.getPhoneNumber());
+        information.setCity(informationUpdateDto.getCity());
+        information.setPostalCode(informationUpdateDto.getPostalCode());
+        information.setAddress(informationUpdateDto.getAddress());
+        information.setBio(informationUpdateDto.getBio());
         information.setUpdateDate(new Date());
         informationRepository.save(information);
 

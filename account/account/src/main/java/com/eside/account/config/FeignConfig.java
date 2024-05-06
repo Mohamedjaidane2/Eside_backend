@@ -1,4 +1,5 @@
-package com.eside.advertisment.config;
+
+package com.eside.account.config;
 
 import org.springframework.context.annotation.Bean;
 

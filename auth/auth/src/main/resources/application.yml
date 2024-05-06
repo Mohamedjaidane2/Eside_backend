@@ -1,4 +1,8 @@
 spring:
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: use_defaults
   application:
     name: auth-microservice
   config:
@@ -8,3 +12,4 @@ eside:
   saas:
     cors:
       cross-origins: http://localhost:4200
+

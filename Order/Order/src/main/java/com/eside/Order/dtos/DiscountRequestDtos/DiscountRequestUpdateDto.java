@@ -12,7 +12,6 @@ import java.util.Date;
 @Builder
 @Data
 public class DiscountRequestUpdateDto {
-
     private Long orderId;
     private double requestedAmount;
 }

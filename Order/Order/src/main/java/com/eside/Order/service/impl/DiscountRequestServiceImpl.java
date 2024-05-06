@@ -37,7 +37,7 @@ public class DiscountRequestServiceImpl implements DiscountRequestService {
         Order order = orderRepository.findById(discountRequestNewDto.getOrderId())
                 .orElseThrow(()-> new EntityNotFoundException("Order not found")
                 );
-        //TODO if the order hase not passed before !!!
+        //TODO if the order hase not passed before !!!,
 
         if (order.getDiscountRequest() != null){
             throw new InvalidOperationException("You've already sent a discount request on this advertisement");

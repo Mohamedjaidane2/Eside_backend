@@ -19,6 +19,7 @@ import java.util.List;
 @Builder
 @Data
 public class OrderDto {
+
     private Long orderId;
 
     private Date orderDate;

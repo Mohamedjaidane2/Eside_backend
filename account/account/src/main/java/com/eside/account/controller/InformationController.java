@@ -34,8 +34,8 @@ public class InformationController {
         return ResponseEntity.ok(informationService.updateInformation(informationUpdateDto,id));
     }
 
-    @PostMapping("/get/accountid")
-    public ResponseEntity<InformationDto> getByAccountId(@RequestBody Long id) {
+    @GetMapping("/get/accountid/{id}")
+    public ResponseEntity<InformationDto> getByAccountId(@PathVariable Long id) {
         InformationDto informationDto = informationService.getInformationByAccountId(id);
         return ResponseEntity.ok(informationDto);
     }

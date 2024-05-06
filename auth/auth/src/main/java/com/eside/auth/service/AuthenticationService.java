@@ -56,6 +56,7 @@ public class AuthenticationService {
 
         User newUser = buildUserFromRequest(request, userRole);
         Account account = createAccountFromRequest(request);
+        //System.out.println("accounttttt======== "+account);
         newUser.setAccountId(account.getId());
 
         repository.save(newUser);
