@@ -66,4 +66,10 @@ public class OrderController {
         String order= orderService.getOrderProgressStatus(orderId);
         return ResponseEntity.ok(order);
     }
+    @DeleteMapping("/delete/{orderId}")
+    //@ApiOperation(value = "Get advertisement by ID")
+    public ResponseEntity<SuccessDto> deleteOrder(@PathVariable Long orderId) {
+        SuccessDto order= orderService.deleteOrder(orderId);
+        return ResponseEntity.ok(order);
+    }
 }

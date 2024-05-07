@@ -30,7 +30,7 @@ public interface AdvertismentService {
 
     SuccessDto checkAdsAndChangeStatus (Long id,AdvertisementStatusEnum advertisementStatusEnum);
 
-    SuccessDto deleteAdvertisement(Long advertisementId );
+    SuccessDto deleteAdvertisement(Long advertisementId , Long accounId);
 
     SuccessDto changerAdvertismentStatusWhileOrdering(Long OrderId,Long advertismentId);
 

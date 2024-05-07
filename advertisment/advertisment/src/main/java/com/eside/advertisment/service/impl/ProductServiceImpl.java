@@ -113,8 +113,9 @@ public class ProductServiceImpl implements ProductService {
     public SuccessDto deleteProductById( Long productId ) {
 
         Optional<Product> product = iProductRepository.findById(productId);
-        if(product.isEmpty())
+        if(product.isEmpty()){
             throw new EntityNotFoundException("product not found!");
+        }
         iProductRepository.delete(product.get());
         return SuccessDto
                 .builder()

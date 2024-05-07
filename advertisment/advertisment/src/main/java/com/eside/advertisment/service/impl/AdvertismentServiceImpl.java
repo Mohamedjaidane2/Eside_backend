@@ -2,6 +2,7 @@ package com.eside.advertisment.service.impl;
 
 import com.eside.advertisment.client.AccountClient;
 import com.eside.advertisment.client.FavoritesClient;
+import com.eside.advertisment.client.OrderClient;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementNewDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
@@ -18,6 +19,7 @@ import com.eside.advertisment.model.Product;
 import com.eside.advertisment.repository.AdvertismentRepository;
 import com.eside.advertisment.repository.ProductRepository;
 import com.eside.advertisment.service.AdvertismentService;
+import com.eside.advertisment.service.ProductService;
 import com.eside.advertisment.specification.AdvertismentSpecification;
 import com.eside.advertisment.utils.SuccessMessage;
 import jakarta.transaction.Transactional;
@@ -36,8 +38,10 @@ import java.util.stream.Collectors;
 public class AdvertismentServiceImpl implements AdvertismentService {
     private final AdvertismentRepository advertismentRepository;
     private final ProductRepository productRepository;
+    private final ProductServiceImpl productService;
     private final AccountClient accountClient;
     private final FavoritesClient favoritesClient;
+    private final OrderClient orderClient;
     private final ModelMapper modelMapper;
 
 
@@ -187,17 +191,60 @@ public class AdvertismentServiceImpl implements AdvertismentService {
 
 
     @Override
-    public SuccessDto deleteAdvertisement(Long advertisementId) {
+    public SuccessDto deleteAdvertisement(Long advertisementId, Long accountId) {
+        // Retrieve the advertisement by ID or throw an exception if not found
         Advertisment existingAdvertisement = advertismentRepository.findById(advertisementId)
-                .orElseThrow(()-> {
-                            throw  new EntityNotFoundException("Advertisement not found");
-                        }
-                );
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement not found"));
+
+        // Check if the account ID matches the advertisement's owner, if not, throw an exception
+        validateOwner(existingAdvertisement, accountId);
+
+        // Check if the advertisement has an active order, if yes, throw an exception
+        validateOrder(existingAdvertisement);
+
+        // Delete the associated order
+        SuccessDto orderDeletionResult = deleteAssociatedOrder(existingAdvertisement.getOrderId());
+
+        // Delete the associated product
+        deleteAssociatedProduct(existingAdvertisement.getProduct().getId());
+        // Optional: Delete the advertisement entity from the repository
         advertismentRepository.delete(existingAdvertisement);
+
+        // Return success message
         return SuccessDto.builder()
                 .message(SuccessMessage.SUCCESSFULLY_REMOVED)
                 .build();
     }
+    private void deleteAssociatedProduct(Long productId) {
+        // Assuming productService.deleteProductById deletes the product by its ID
+        productService.deleteProductById(productId);
+    }
+    // Method to validate if the provided account ID matches the advertisement's owner
+    private void validateOwner(Advertisment advertisement, Long accountId) {
+        if (!Objects.equals(advertisement.getUserAccountId(), accountId)) {
+            throw new InvalidOperationException("You cannot delete this advertisement");
+        }
+    }
+
+    // Method to validate if the advertisement has an active order
+    private void validateOrder(Advertisment advertisement) {
+        if (advertisement.getOrderId() != null) {
+            throw new InvalidOperationException("You cannot delete an advertisement with an active order");
+        }
+    }
+
+    // Method to delete the associated order
+    private SuccessDto deleteAssociatedOrder(Long orderId) {
+        if (orderId != null) {
+            // Assuming orderClient.deleteOrder returns a SuccessDto
+            return orderClient.deleteOrder(orderId);
+        }
+        // If there is no associated order, return a success message
+        return SuccessDto.builder()
+                .message("No associated order found for deletion")
+                .build();
+    }
+
 
     @Override
     public SuccessDto changerAdvertismentStatusWhileOrdering(Long OrderId,Long advertismentId) {

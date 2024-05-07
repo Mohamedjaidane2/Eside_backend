@@ -24,4 +24,6 @@ public interface OrderService {
     SuccessDto confirmOrderById(Long orderId);
 
     String getOrderProgressStatus(Long orderId);
+
+    SuccessDto deleteOrder (Long orderId);
 }

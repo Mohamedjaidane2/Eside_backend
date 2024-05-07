@@ -126,10 +126,10 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisements);
     }
 
-    @DeleteMapping("/delete/{advertisementId}")
+    @DeleteMapping("/delete/{advertisementId}/{accountId}")
     //@ApiOperation(value = "Delete advertisement by ID")
-    public ResponseEntity<SuccessDto> deleteAdvertisement(@PathVariable Long advertisementId) {
-        return ResponseEntity.ok(advertisementService.deleteAdvertisement(advertisementId));
+    public ResponseEntity<SuccessDto> deleteAdvertisement(@PathVariable Long advertisementId,@PathVariable Long accountId) {
+        return ResponseEntity.ok(advertisementService.deleteAdvertisement(advertisementId,accountId));
     }
 
 

@@ -14,6 +14,7 @@ import com.eside.Order.externalData.Advertisment;
 import com.eside.Order.model.Order;
 import com.eside.Order.repository.OrderRepository;
 import com.eside.Order.service.OrderService;
+import com.eside.Order.utils.SuccessMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository ;
     private final AccountClient accountClient;
     private final AdvertismentClient advertismentClient;
+    private final DiscountRequestServiceImpl discountRequestService;
 
 
     @Override
@@ -180,5 +182,24 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(()-> new EntityNotFoundException("Order not found")
                 );
         return order.getOrderStatus().name();
+    }
+
+    @Override
+    public SuccessDto deleteOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> {
+                            throw  new EntityNotFoundException("order not found");
+                        }
+                );
+        if (order.getOrderStatus()!=OrderStatusEnum.AWAITING_CONFIRMATION){
+            throw new InvalidOperationException("you cannot delete an active Order");
+        }
+        if(order.getDiscountRequest()!=null){
+        discountRequestService.deleteDiscountRequestById(order.getDiscountRequest().getId());
+        }
+        orderRepository.delete(order);
+        return SuccessDto.builder()
+                .message(SuccessMessage.SUCCESSFULLY_REMOVED)
+                .build();
     }
 }
