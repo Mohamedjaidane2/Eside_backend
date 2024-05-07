@@ -19,7 +19,7 @@ spring:
         - id: account
           uri: http://localhost:8093
           predicates:
-            - Path= /api/account/** , /api/feedBack/** , /api/information/**
+            - Path= /api/account/** , /api/feedBack/** , /api/information/** , /api/favorite/**
         - id: advertisment
           uri: http://localhost:8095
           predicates:

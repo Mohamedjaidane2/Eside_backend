@@ -1,6 +1,7 @@
 package com.eside.advertisment.service.impl;
 
 import com.eside.advertisment.client.AccountClient;
+import com.eside.advertisment.client.FavoritesClient;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementNewDto;
 import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
@@ -11,6 +12,7 @@ import com.eside.advertisment.enums.AdvertisementStatusEnum;
 import com.eside.advertisment.exception.EntityNotFoundException;
 import com.eside.advertisment.exception.InvalidOperationException;
 import com.eside.advertisment.externalData.Account;
+import com.eside.advertisment.externalData.FavortieDto;
 import com.eside.advertisment.model.Advertisment;
 import com.eside.advertisment.model.Product;
 import com.eside.advertisment.repository.AdvertismentRepository;
@@ -35,6 +37,7 @@ public class AdvertismentServiceImpl implements AdvertismentService {
     private final AdvertismentRepository advertismentRepository;
     private final ProductRepository productRepository;
     private final AccountClient accountClient;
+    private final FavoritesClient favoritesClient;
     private final ModelMapper modelMapper;
 
 
@@ -279,5 +282,17 @@ public class AdvertismentServiceImpl implements AdvertismentService {
                 .stream()
                 .map(AdvertisementDto::customMapping)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AdvertisementDto> getFavoritesByAccount(Long userAccoundId) {
+        List<AdvertisementDto> advertisementDtoList = new ArrayList<>();
+        List<FavortieDto> favortieDtoList = favoritesClient.getfavorites(userAccoundId);
+        for(FavortieDto fav : favortieDtoList){
+        Advertisment advertisment = advertismentRepository.findById(fav.getAdvertismentId())
+                .orElseThrow(()-> new EntityNotFoundException("Advertisement not found"));
+        advertisementDtoList.add(AdvertisementDto.customMapping(advertisment));
+        }
+        return advertisementDtoList;
     }
 }

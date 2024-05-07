@@ -133,4 +133,11 @@ public class AdvertisementController {
     }
 
 
+    @GetMapping("/favorites/{accountId}")
+    //@ApiOperation(value = "Get advertisements by account")
+    public ResponseEntity<List<AdvertisementDto>> getfavorites(@PathVariable Long accountId) {
+        List<AdvertisementDto> advertisements = advertisementService.getFavoritesByAccount(accountId);
+        return ResponseEntity.ok(advertisements);
+    }
+
 }

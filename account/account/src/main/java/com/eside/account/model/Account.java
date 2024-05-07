@@ -53,4 +53,7 @@ public class Account {
     @JoinColumn(name = "information_id")
     private Information information;
 
+    @OneToMany(mappedBy = "account")
+    private List<Favorite> favoriteList;
+
 }

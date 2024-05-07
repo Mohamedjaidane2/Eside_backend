@@ -5,6 +5,7 @@ import com.eside.advertisment.dtos.AdvertisementDtos.AdvertisementUpdateDtos;
 import com.eside.advertisment.dtos.FilterDto;
 import com.eside.advertisment.dtos.SuccessDto;
 import com.eside.advertisment.enums.AdvertisementStatusEnum;
+import com.eside.advertisment.externalData.FavortieDto;
 import com.eside.advertisment.model.Advertisment;
 import org.springframework.data.domain.Pageable;
 
@@ -42,4 +43,8 @@ public interface AdvertismentService {
     List<AdvertisementDto> getTop10ByCreationDateNoAuth();
 
     List<AdvertisementDto> getALLByCreationDate(Long userAccoundId);
+
+    List<AdvertisementDto> getFavoritesByAccount(Long userAccoundId);
+
+
 }

@@ -47,6 +47,9 @@ public class Advertisment {
     @JoinColumn(name = "owner_id")
     private Long userAccountId;
 
+    @JoinColumn(name = "favorite_id", nullable = true)
+    private Long favoritesId;
+
     @JoinColumn(name = "owner_accountName")
     private String ownerAccountName;
 
@@ -56,6 +59,9 @@ public class Advertisment {
 
     @Column(name = "order_Id",nullable = true)
     private Long orderId ;
+
+
+
     @Override
     public String toString() {
         return "Advertisment{" +
