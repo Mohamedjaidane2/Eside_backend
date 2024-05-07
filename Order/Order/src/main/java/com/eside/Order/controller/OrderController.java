@@ -25,7 +25,7 @@ public class OrderController {
 
     @GetMapping("/{accountId}")
     //@ApiOperation(value = "Get advertisement by ID")
-    public ResponseEntity<List<OrderDto>> getAdvertisementById(@PathVariable Long accountId) {
+    public ResponseEntity<List<OrderDto>> getOrdertBYAccountId(@PathVariable Long accountId) {
         List<OrderDto> orderDtos = orderService.getOrderByAccount(accountId);
         return ResponseEntity.ok(orderDtos);
     }

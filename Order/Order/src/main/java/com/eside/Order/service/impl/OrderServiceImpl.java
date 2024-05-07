@@ -37,13 +37,13 @@ public class OrderServiceImpl implements OrderService {
         Advertisment advertisment = new Advertisment();
         try {
             account= accountClient.getAccountByIdFromOrder(accountId);
-            System.out.println("our account " + account);
+            //System.out.println("our account " + account);
         }catch (Exception e){
             throw e ;
         }
         try {
             advertisment= advertismentClient.getAdvertismentByIdFromOrder(advertisementId);
-            System.out.println("our advertisment " + advertisment);
+            //System.out.println("our advertisment " + advertisment);
         }catch (Exception e){
             throw e ;
         }
