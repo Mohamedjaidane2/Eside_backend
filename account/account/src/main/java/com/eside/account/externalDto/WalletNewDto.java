@@ -1,14 +1,16 @@
-package com.eside.Order.dtos;
+package com.eside.account.externalDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public  class SuccessDto {
-    private String message;
+@Data
+public class WalletNewDto {
+
+    private Long AccountId ;
+
 }

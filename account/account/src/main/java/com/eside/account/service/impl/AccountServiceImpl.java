@@ -1,10 +1,13 @@
 package com.eside.account.service.impl;
 
+import com.eside.account.client.WalletClient;
 import com.eside.account.dtos.AccountDtos.AccountDto;
 import com.eside.account.dtos.AccountDtos.NewAccountDto;
 import com.eside.account.dtos.SuccessDto;
 import com.eside.account.exception.EntityNotFoundException;
 import com.eside.account.exception.InvalidOperationException;
+import com.eside.account.externalDto.WalletDto;
+import com.eside.account.externalDto.WalletNewDto;
 import com.eside.account.model.Account;
 import com.eside.account.model.Information;
 import com.eside.account.repository.AccountRepository;
@@ -27,23 +30,24 @@ public class AccountServiceImpl implements AccountService {
     private final ModelMapper modelMapper;
     private final AccountRepository accountRepository;
     private final InformationRepository informationRepository;
+    private final WalletClient walletClient;
     @Override
     @Transactional
     public Account createAccount(NewAccountDto newAccountDto) {
-        String baseAccountName = newAccountDto.getFirstName() + "_" + newAccountDto.getLastName();
-        String accountName = generateUniqueAccountName(baseAccountName);
+        String accountName = generateUniqueAccountName(newAccountDto.getFirstName(), newAccountDto.getLastName());
+        Account newAccount = buildAccount(newAccountDto, accountName);
+        Information emptyInfo = createEmptyInformation(newAccount);
+        return newAccount;
+    }
 
-        Account newAccount = Account.builder()
+    private Account buildAccount(NewAccountDto newAccountDto, String accountName) {
+        return Account.builder()
                 .accountName(accountName)
                 .creationDate(new Date())
                 .isActive(true)
                 .firstName(newAccountDto.getFirstName())
                 .lastName(newAccountDto.getLastName())
                 .build();
-
-        Information emptyInfo = createEmptyInformation(newAccount);
-
-        return newAccount;
     }
 
     private Information createEmptyInformation(Account newAccount) {
@@ -62,11 +66,14 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.save(newAccount);
         informationRepository.save(emptyInfo);
-
+        WalletDto walletDto = walletClient.createWallet(WalletNewDto.builder().AccountId(newAccount.getId()).build());
+        System.out.println("----------------------------------------------------------------------------");
+        System.out.println(walletDto);
         return emptyInfo;
     }
 
-    private String generateUniqueAccountName(String baseAccountName) {
+    private String generateUniqueAccountName(String firstName, String lastName) {
+        String baseAccountName = firstName + "_" + lastName;
         String uniqueAccountName = baseAccountName;
         int suffix = 1;
         while (accountRepository.findByAccountName(uniqueAccountName).isPresent()) {
@@ -75,6 +82,7 @@ public class AccountServiceImpl implements AccountService {
         }
         return uniqueAccountName;
     }
+
     @Override
     public SuccessDto updateAccountName(Long id, String newAccountName) {
         Account account = accountRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("account not found"));

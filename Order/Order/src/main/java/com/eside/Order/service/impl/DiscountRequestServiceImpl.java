@@ -39,7 +39,7 @@ public class DiscountRequestServiceImpl implements DiscountRequestService {
                 );
 
         //TODO if the order hase not passed before !!!,
-        if (order.getDiscountRequest() != null){
+        if (order.getDiscountRequest()!=null && order.getDiscountRequest().getEDiscountRequestStats()!=DiscountRequestStatus.DECLINED){
             throw new InvalidOperationException("You've already sent a discount request on this advertisement");
         }
         if(discountRequestNewDto.getRequestedAmount()>order.getOrderAmount()){
@@ -47,7 +47,7 @@ public class DiscountRequestServiceImpl implements DiscountRequestService {
         }
         // Create a new DiscountRequest using the builder pattern
         DiscountRequest discountRequest = DiscountRequest.builder()
-                .counterDiscountAmount(discountRequestNewDto.getRequestedAmount())
+                .requestedAmount(discountRequestNewDto.getRequestedAmount())
                 .order(order)
                 .eDiscountRequestStats(DiscountRequestStatus.WAITING)
                 .requestDate(new Date())
@@ -120,16 +120,29 @@ public class DiscountRequestServiceImpl implements DiscountRequestService {
     }
 
     @Override
-    public List<DiscountRequestDto> getDiscountByAdvertisementOwnerId(Long advertisementOwnerId) {
-        List<Order> ordersList = orderRepository.findByAdvertisementId(advertisementOwnerId);
+    public List<DiscountRequestDto> getRecivedDiscountRequest(Long recived) {
+        List<Order> ordersList = orderRepository.findAllByReciverIdOrderByOrderDateDesc(recived);
+        return getDiscountRequestDtos(ordersList);
+    }
+
+    @Override
+    public List<DiscountRequestDto> getSendedDiscountRequest(Long senderId) {
+        List<Order> ordersList = orderRepository.findAllBySenderIdOrderByOrderDateDesc(senderId);
+        return getDiscountRequestDtos(ordersList);
+    }
+
+    private List<DiscountRequestDto> getDiscountRequestDtos(List<Order> ordersList) {
         List<DiscountRequest> discountRequests = new ArrayList<>();
         for (Order order : ordersList){
-            discountRequests.add(order.getDiscountRequest());
+            if(order.getDiscountRequest()!=null){
+                discountRequests.add(order.getDiscountRequest());
+            }
         }
         return discountRequests.stream()
                 .map(DiscountRequestDto::customMapping)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public SuccessDto acceptDiscount(Long discountId) {
@@ -147,6 +160,7 @@ public class DiscountRequestServiceImpl implements DiscountRequestService {
         orderRepository.save(order);
 
         discountRequest.setEDiscountRequestStats(DiscountRequestStatus.ACCEPTED);
+        discountRequestRepository.save(discountRequest);
         return SuccessDto.builder()
                 .message(SuccessMessage.SUCCESSFULLY_ACCEPTED)
                 .build();
@@ -158,7 +172,13 @@ public class DiscountRequestServiceImpl implements DiscountRequestService {
         DiscountRequest discountRequest = discountRequestRepository.findById(discountId)
                 .orElseThrow(() -> new EntityNotFoundException("Discount Request not found"));
 
-        // Update the eDiscountRequestStats to DECLINED
+        Order order = discountRequest.getOrder();
+
+        // Set the price of the advertisement to the requested amount in the discount request
+        order.setOrderStatus(OrderStatusEnum.CANCELLED);
+        // Save the updated advertisement
+        orderRepository.save(order);
+
         discountRequest.setEDiscountRequestStats(DiscountRequestStatus.DECLINED);
         discountRequestRepository.save(discountRequest);
 

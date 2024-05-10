@@ -1,5 +1,6 @@
 package com.eside.payment.controller;
 
+import com.eside.payment.dto.WalletDtos.WalletActionDto;
 import com.eside.payment.dto.WalletDtos.WalletDto;
 import com.eside.payment.dto.WalletDtos.WalletNewDto;
 import com.eside.payment.service.IWalletService;
@@ -17,7 +18,7 @@ public class WalletController {
 
     @PostMapping("/create")
     //@ApiOperation("Create a wallet ")
-    public ResponseEntity<SuccessDto> createWallet(@RequestBody WalletNewDto walletNewDto) {
+    public ResponseEntity<WalletDto> createWallet(@RequestBody WalletNewDto walletNewDto) {
         return ResponseEntity.ok(walletService.createWallet(walletNewDto));
     }
 
@@ -42,14 +43,14 @@ public class WalletController {
 
     @PostMapping("/add-funds")
     //@ApiOperation("Add funds to a wallet")
-    public ResponseEntity<SuccessDto> addFundsToWallet(@RequestParam Long walletId, @RequestParam double amount) {
-        return ResponseEntity.ok(walletService.addFundsToWallet(walletId, amount));
+    public ResponseEntity<SuccessDto> addFundsToWallet(@RequestBody WalletActionDto walletActionDto) {
+        return ResponseEntity.ok(walletService.addFundsToWallet(walletActionDto));
     }
 
     @PostMapping("/withdraw-funds")
     //@ApiOperation("Withdraw funds from a wallet")
-    public ResponseEntity<SuccessDto> withdrawFunds(@RequestParam Long walletId, @RequestParam double amount) {
-        return ResponseEntity.ok(walletService.withdrawFunds(walletId, amount));
+    public ResponseEntity<SuccessDto> withdrawFunds(@RequestBody WalletActionDto walletActionDto) {
+        return ResponseEntity.ok(walletService.withdrawFunds(walletActionDto));
     }
 }
 

@@ -28,7 +28,9 @@ public class OrderDto {
 
     private Long advertisementId;
 
-    private Long accountId;
+    private Long senderId;
+
+    private Long reciverId;
 
     public static List<OrderDto> customListMapping(List<Order> orders) {
         if(orders==null) return null;
@@ -47,7 +49,7 @@ public class OrderDto {
                 ", orderDate=" + orderDate +
                 ", orderStatus=" + orderStatus +
                 ", advertisementId=" + advertisementId +
-                ", accountId=" + accountId +
+                ", accountId=" + senderId +
                 '}';
     }
     public static OrderDto customMapping (Order order){
@@ -55,7 +57,8 @@ public class OrderDto {
                 .orderId(order.getOrderId())
                 .orderDate(order.getOrderDate())
                 .orderStatus(order.getOrderStatus())
-                .accountId(order.getAccountId())
+                .senderId(order.getSenderId())
+                .reciverId(order.getReciverId())
                 .advertisementId(order.getAdvertisementId())
                 .build();
     }

@@ -2,6 +2,7 @@ package com.eside.Order.controller;
 
 import com.eside.Order.dtos.OrderDtos.OrderDto;
 import com.eside.Order.dtos.SuccessDto;
+import com.eside.Order.enums.OrderStatusEnum;
 import com.eside.Order.service.OrderService;
 import com.eside.Order.service.impl.OrderServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,11 @@ public class OrderController {
     public ResponseEntity<List<OrderDto>> getOrdertBYAccountId(@PathVariable Long accountId) {
         List<OrderDto> orderDtos = orderService.getOrderByAccount(accountId);
         return ResponseEntity.ok(orderDtos);
+    }
+
+    @PutMapping("/change-status/delivery-provider/{orderId}")
+    public ResponseEntity<SuccessDto> changeStatusByDeliveryProvider(@PathVariable Long orderId ,@RequestBody OrderStatusEnum status) {
+        return ResponseEntity.ok(orderService.changeStatusByDeliveryProvider(orderId, status));
     }
 
     @PutMapping("/cancel/{orderId}")

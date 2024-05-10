@@ -2,15 +2,19 @@ package com.eside.Order.service.impl;
 
 import com.eside.Order.client.AccountClient;
 import com.eside.Order.client.AdvertismentClient;
+import com.eside.Order.client.WalletClient;
 import com.eside.Order.dtos.AdvertisementDtos.AdvertisementDto;
 import com.eside.Order.dtos.OrderDtos.OrderDto;
 import com.eside.Order.dtos.SuccessDto;
 import com.eside.Order.enums.AdvertisementSoldStatusEnum;
+import com.eside.Order.enums.DiscountRequestStatus;
 import com.eside.Order.enums.OrderStatusEnum;
 import com.eside.Order.exception.EntityNotFoundException;
 import com.eside.Order.exception.InvalidOperationException;
 import com.eside.Order.externalData.Account;
 import com.eside.Order.externalData.Advertisment;
+import com.eside.Order.externalData.WalletActionDto;
+import com.eside.Order.externalData.WalletDto;
 import com.eside.Order.model.Order;
 import com.eside.Order.repository.OrderRepository;
 import com.eside.Order.service.OrderService;
@@ -30,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository ;
     private final AccountClient accountClient;
     private final AdvertismentClient advertismentClient;
+    private final WalletClient walletClient;
     private final DiscountRequestServiceImpl discountRequestService;
 
 
@@ -51,10 +56,12 @@ public class OrderServiceImpl implements OrderService {
         }
 
         //Check if the account has already placed an order for the specified advertisement
-        boolean hasPlacedOrder = orderRepository.existsByAccountIdAndAdvertisementId(accountId, advertisementId);
-
-        if (hasPlacedOrder) {
-            throw new InvalidOperationException("You have already placed an order for this advertisement");
+        //boolean hasPlacedOrder = orderRepository.existsBySenderIdAndAdvertisementId(accountId, advertisementId);
+        List<Order> orderList = orderRepository.findAllBySenderIdAndAdvertisementIdOrderByOrderDateDesc(accountId, advertisementId);
+        for(Order order : orderList){
+            if (order.getOrderStatus()!= OrderStatusEnum.CANCELLED && order.getDiscountRequest()!=null && order.getDiscountRequest().getEDiscountRequestStats()!=DiscountRequestStatus.DECLINED){
+                throw new InvalidOperationException("You have already placed an order for this advertisement");
+            }
         }
 
         // Check if the advertisement belongs to the same account
@@ -68,7 +75,8 @@ public class OrderServiceImpl implements OrderService {
 
         // Create a new Order using the builder pattern
         Order order = Order.builder()
-                .accountId(accountId)
+                .senderId(accountId)
+                .reciverId(advertisment.getUserAccountId())
                 .advertisementId(advertisementId)
                 .orderStatus(OrderStatusEnum.AWAITING_CONFIRMATION)
                 .orderAmount(advertisment.getPrice())
@@ -90,8 +98,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> getOrderByAccount(Long accountId) {
-        List<Order> orders = orderRepository.findByAccountId(accountId);
-        return OrderDto.customListMapping(orders);
+        List<Order> output = new ArrayList<>();
+        List<Order> orders = orderRepository.findAllBySenderIdOrderByOrderDateDesc(accountId);
+        for(Order o : orders){
+            if (o.getDiscountRequest()==null || o.getDiscountRequest().getEDiscountRequestStats() == DiscountRequestStatus.ACCEPTED){
+                output.add(o);
+            }
+        }
+        return OrderDto.customListMapping(output);
     }
 
     @Override
@@ -142,26 +156,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> getRecivedOrder(Long accountId) {
-        List<AdvertisementDto>  list= new ArrayList<>();
-        List<OrderDto> orderList = new ArrayList<>();
-        try {
-            list = advertismentClient.getAdvertisementByAccountFromOrder(accountId);
-            System.out.println("our output  " + list);
-        }catch (Exception e){
-            throw e ;
-        }
-        for (AdvertisementDto advertisementDto : list){
-
-            if(advertisementDto.getOrderId()!= null ) {
-                Order order = orderRepository.findById(advertisementDto.getOrderId())
-                        .orElseThrow(()-> new EntityNotFoundException("Order not found")
-                        );
-                var orderDto = OrderDto.customMapping(order);
-                orderList.add(orderDto);
-            };
-
-        }
-        return orderList;
+        List<Order> orderList = orderRepository.findAllByReciverIdOrderByOrderDateDesc(accountId);
+        return OrderDto.customListMapping(orderList);
     }
 
     @Override
@@ -201,5 +197,21 @@ public class OrderServiceImpl implements OrderService {
         return SuccessDto.builder()
                 .message(SuccessMessage.SUCCESSFULLY_REMOVED)
                 .build();
+    }
+
+    @Override
+    public SuccessDto changeStatusByDeliveryProvider(Long orderId, OrderStatusEnum orderStatusEnum) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new EntityNotFoundException("order not found")
+                );
+        order.setOrderStatus(orderStatusEnum);
+        SuccessDto successDto = SuccessDto.builder().message("Status Changed").build();
+        if(orderStatusEnum==OrderStatusEnum.PAYMENT_RECEIVED){
+            WalletDto walletDto = walletClient.getWalletByAccountId(order.getReciverId());
+            SuccessDto addfunds = walletClient.addFundsToWalletFromOrder(WalletActionDto.builder().walletId(walletDto.getId()).amount(order.getOrderAmount()).build());
+        successDto.setMessage(addfunds.getMessage());
+        }
+        orderRepository.save(order);
+        return successDto;
     }
 }

@@ -2,6 +2,7 @@ package com.eside.Order.service;
 
 import com.eside.Order.dtos.OrderDtos.OrderDto;
 import com.eside.Order.dtos.SuccessDto;
+import com.eside.Order.enums.OrderStatusEnum;
 
 import java.util.List;
 
@@ -26,4 +27,6 @@ public interface OrderService {
     String getOrderProgressStatus(Long orderId);
 
     SuccessDto deleteOrder (Long orderId);
+
+    SuccessDto changeStatusByDeliveryProvider(Long orderId, OrderStatusEnum orderStatusEnum);
 }

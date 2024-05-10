@@ -7,9 +7,11 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
-    List<Order> findByAccountId(Long accountId) ;
-    List<Order> findByAdvertisementId(Long accountId) ;
+    List<Order> findAllBySenderIdOrderByOrderDateDesc(Long accountId) ;
+    List<Order> findAllByReciverIdOrderByOrderDateDesc(Long reciverID) ;
+    //List<Order> findAllBySenderId(Long senderId) ;
 
-    boolean existsByAccountIdAndAdvertisementId(Long accountId, Long advertisementId);
+    boolean existsBySenderIdAndAdvertisementId(Long accountId, Long advertisementId);
+    List<Order> findAllBySenderIdAndAdvertisementIdOrderByOrderDateDesc(Long accountId, Long advertisementId);
 
 }

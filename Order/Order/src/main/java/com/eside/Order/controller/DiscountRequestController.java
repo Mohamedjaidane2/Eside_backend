@@ -57,10 +57,17 @@ public class DiscountRequestController {
     }
 
 
-    @GetMapping("/advertisementOowner/{advertisementOwnerId}")
+    @GetMapping("/get/reciver/{reciverId}")
     //@ApiOperation(value = "Get discount requests by advertisement owner ID")
-    public ResponseEntity<List<DiscountRequestDto>> getDiscountsByAdvertisementOwnerId(@PathVariable Long advertisementOwnerId) {
-        List<DiscountRequestDto> discountRequests = discountRequestService.getDiscountByAdvertisementOwnerId(advertisementOwnerId);
+    public ResponseEntity<List<DiscountRequestDto>> getByReciver(@PathVariable Long reciverId) {
+        List<DiscountRequestDto> discountRequests = discountRequestService.getRecivedDiscountRequest(reciverId);
+        return ResponseEntity.ok(discountRequests);
+    }
+
+    @GetMapping("/get/sender/{senderId}")
+    //@ApiOperation(value = "Get discount requests by advertisement owner ID")
+    public ResponseEntity<List<DiscountRequestDto>> getBySender(@PathVariable Long senderId) {
+        List<DiscountRequestDto> discountRequests = discountRequestService.getSendedDiscountRequest(senderId);
         return ResponseEntity.ok(discountRequests);
     }
     @PutMapping("/accept/{discountId}")

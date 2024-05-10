@@ -33,7 +33,9 @@ public class Order {
 
     private Long advertisementId;
 
-    private Long accountId;
+    private Long senderId;
+
+    private Long reciverId;
 
     //TODO adding discount request relationship
     @OneToOne()

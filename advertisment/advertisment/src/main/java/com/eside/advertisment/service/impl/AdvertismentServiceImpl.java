@@ -335,10 +335,13 @@ public class AdvertismentServiceImpl implements AdvertismentService {
     public List<AdvertisementDto> getFavoritesByAccount(Long userAccoundId) {
         List<AdvertisementDto> advertisementDtoList = new ArrayList<>();
         List<FavortieDto> favortieDtoList = favoritesClient.getfavorites(userAccoundId);
+        if (!favortieDtoList.isEmpty()){
         for(FavortieDto fav : favortieDtoList){
         Advertisment advertisment = advertismentRepository.findById(fav.getAdvertismentId())
                 .orElseThrow(()-> new EntityNotFoundException("Advertisement not found"));
         advertisementDtoList.add(AdvertisementDto.customMapping(advertisment));
+        }
+         return advertisementDtoList;
         }
         return advertisementDtoList;
     }

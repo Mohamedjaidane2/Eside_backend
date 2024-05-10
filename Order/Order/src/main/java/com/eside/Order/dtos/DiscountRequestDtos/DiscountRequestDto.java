@@ -28,6 +28,13 @@ public class DiscountRequestDto {
 
     private Date requestDate;
 
+    private Long advertismentId;
+
+    private Long senderId;
+
+    private Long reciverId;
+
+
 
 
     public static List<DiscountRequestDto> customListMapping(List<DiscountRequest> discountRequests) {
@@ -47,6 +54,9 @@ public class DiscountRequestDto {
                 .discountRequestStatus(discountRequest.getEDiscountRequestStats())
                 .counterDiscountAmount(discountRequest.getCounterDiscountAmount())
                 .requestDate(discountRequest.getRequestDate())
+                .advertismentId(discountRequest.getOrder().getAdvertisementId())
+                .senderId(discountRequest.getOrder().getSenderId())
+                .reciverId(discountRequest.getOrder().getReciverId())
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.eside.payment.service.impl;
 
 import com.eside.payment.client.AccountClient;
 import com.eside.payment.dto.TransactionDtos.TransactionNewDto;
+import com.eside.payment.dto.WalletDtos.WalletActionDto;
 import com.eside.payment.dto.WalletDtos.WalletDto;
 import com.eside.payment.dto.WalletDtos.WalletNewDto;
 import com.eside.payment.exception.EntityNotFoundException;
@@ -36,7 +37,7 @@ public class WalletServiceImpl implements IWalletService {
 
 
     @Override
-    public SuccessDto createWallet(@NotNull WalletNewDto walletNewDto) {
+    public WalletDto createWallet(@NotNull WalletNewDto walletNewDto) {
         //TODO Throw exeption when account id is duplicated --> throw Already USED
 
 
@@ -46,11 +47,6 @@ public class WalletServiceImpl implements IWalletService {
         Optional<Wallet> wallet = iWalletRepository.findByAccountId(walletNewDto.getAccountId());
         if(wallet.isPresent()){
             throw new InvalidOperationException("Wallet already exist");
-        }
-        try {
-            Account account = accountClient.getAccountByIdFromPayment(walletNewDto.getAccountId());
-        }catch (EntityNotFoundException e){
-            throw e ;
         }
 
         // Create a new Wallet entity with default balance
@@ -62,9 +58,7 @@ public class WalletServiceImpl implements IWalletService {
         iWalletRepository.save(newwallet);
 
         // Create a SuccessDto with a success message
-        return SuccessDto.builder()
-                .message(SuccessMessage.SUCCESSFULLY_CREATED)
-                .build();
+        return WalletDto.customMapping(newwallet);
     }
 
     @Override
@@ -85,34 +79,34 @@ public class WalletServiceImpl implements IWalletService {
     }
 
     @Override
-    public SuccessDto addFundsToWallet(Long walletId, double amount) {
-        if (amount<0){
+    public SuccessDto addFundsToWallet(WalletActionDto walletActionDto) {
+        if (walletActionDto.getAmount()<0){
             throw new InvalidOperationException("amount must be superior then zero");
         }
 
-        Wallet wallet = iWalletRepository.findById(walletId)
+        Wallet wallet = iWalletRepository.findById(walletActionDto.getWalletId())
                 .orElseThrow((() -> new EntityNotFoundException("Wallet not found")));
 
 
         double balance = wallet.getBalance();
-        double newBalance = balance + amount;
-        String transactionDetails = balance + " + " + amount + " = " + newBalance;
+        double newBalance = balance + walletActionDto.getAmount();
+        String transactionDetails = balance + " + " + walletActionDto.getAmount() + " = " + newBalance;
 
 
         TransactionNewDto transactionNewDto = TransactionNewDto.builder()
-                .amount(amount)
+                .amount(walletActionDto.getAmount())
                 .transaction_date(new Date())
                 .current_balance(newBalance)
                 .balanceBeforeAction(balance)
                 .action(transactionDetails)
-                .walletId(walletId)
+                .walletId(walletActionDto.getWalletId())
                 .build();
         try {
             iTransactionServices.createTransaction(transactionNewDto);
         } catch (InvalidOperationException e) {
             throw new InvalidOperationException("Transaction Not valid");
         }
-        wallet.setBalance(wallet.getBalance() + amount);
+        wallet.setBalance(wallet.getBalance() + walletActionDto.getAmount());
         iWalletRepository.save(wallet);
         return SuccessDto.builder()
                 .message(SuccessMessage.SUCCESSFULLY_UPDATED)
@@ -120,25 +114,25 @@ public class WalletServiceImpl implements IWalletService {
     }
 
     @Override
-    public SuccessDto withdrawFunds(Long walletId, double amount) {
-        Wallet wallet = iWalletRepository.findById(walletId)
+    public SuccessDto withdrawFunds(WalletActionDto walletActionDto) {
+        Wallet wallet = iWalletRepository.findById(walletActionDto.getWalletId())
                 .orElseThrow((() -> new EntityNotFoundException("Wallett not found")));
-        if(amount>wallet.getBalance()){
+        if(walletActionDto.getAmount()>wallet.getBalance()){
             throw new InvalidOperationException("Insuffisant funds");
         }
         double balance = wallet.getBalance();
-        double newBalance = balance - amount;
-        String transactionDetails = balance + " - " + amount + " = " + newBalance;
+        double newBalance = balance - walletActionDto.getAmount();
+        String transactionDetails = balance + " - " + walletActionDto.getAmount() + " = " + newBalance;
 
         TransactionNewDto transactionNewDto = TransactionNewDto.builder()
-                .amount(amount)
+                .amount(walletActionDto.getAmount())
                 .transaction_date(new Date())
                 .current_balance(newBalance)
                 .balanceBeforeAction(balance)
                 .action(transactionDetails)
-                .walletId(walletId)
+                .walletId(walletActionDto.getWalletId())
                 .build();
-        wallet.setBalance(wallet.getBalance() - amount);
+        wallet.setBalance(wallet.getBalance() - walletActionDto.getAmount());
         try {
             iTransactionServices.createTransaction(transactionNewDto);
         } catch (InvalidOperationException e) {

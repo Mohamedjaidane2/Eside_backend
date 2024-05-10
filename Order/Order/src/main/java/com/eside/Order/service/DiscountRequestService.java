@@ -15,7 +15,8 @@ public interface DiscountRequestService {
     DiscountRequestDto getDiscountById(Long discountId);
     List<DiscountRequestDto> getAllDiscount();
     SuccessDto deleteDiscountRequestById(Long discountId);
-    List<DiscountRequestDto> getDiscountByAdvertisementOwnerId(Long advertisementOwnerId);
+    List<DiscountRequestDto> getRecivedDiscountRequest(Long recived);
+    List<DiscountRequestDto> getSendedDiscountRequest(Long senderId);
     SuccessDto acceptDiscount(Long discountId);
     SuccessDto declineDiscount(Long discountId);
 }
