@@ -22,8 +22,6 @@ public interface OrderService {
 
     List<OrderDto> getRecivedOrder(Long accountId );
 
-    SuccessDto confirmOrderById(Long orderId);
-
     String getOrderProgressStatus(Long orderId);
 
     SuccessDto deleteOrder (Long orderId);

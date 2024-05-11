@@ -44,6 +44,16 @@ public class AdvertisementController {
     public ResponseEntity<SuccessDto> changerAdvertismentStatusWhileOrdering(@PathVariable Long OrderId, @PathVariable Long advertisementId) {
         return ResponseEntity.ok(advertisementService.changerAdvertismentStatusWhileOrdering(OrderId,advertisementId));
     }
+    @PutMapping("/updateWhilePayment/{OrderId}/{advertisementId}")
+   // @ApiOperation(value = "Update advertisement")
+    public ResponseEntity<SuccessDto> changerAdvertismentStatusWhilePayment(@PathVariable Long OrderId, @PathVariable Long advertisementId) {
+        return ResponseEntity.ok(advertisementService.changerAdvertismentStatusWhilePayment(OrderId,advertisementId));
+    }
+    @PutMapping("/deleteOrder/{advertisementId}")
+   // @ApiOperation(value = "Update advertisement")
+    public ResponseEntity<SuccessDto> deleteOrder(@PathVariable Long advertisementId) {
+        return ResponseEntity.ok(advertisementService.deleteOrder(advertisementId));
+    }
     @GetMapping("/{advertisementId}")
     //@ApiOperation(value = "Get advertisement by ID")
     public ResponseEntity<AdvertisementDto> getAdvertisementById(@PathVariable Long advertisementId) {
@@ -116,6 +126,12 @@ public class AdvertisementController {
     public ResponseEntity<List<AdvertisementDto>> getAllAdvertisements() {
         List<AdvertisementDto> advertisements = advertisementService.getAllAdvertisement();
         return ResponseEntity.ok(advertisements);
+    }
+    @GetMapping("/is-available/{id}")
+    // @ApiOperation(value = "Get all advertisements")
+    public ResponseEntity<Boolean> isAvailable(@PathVariable Long id) {
+        Boolean isAvailable = advertisementService.isAvailable(id);
+        return ResponseEntity.ok(isAvailable);
     }
     @PostMapping("/all/byFilter")
     public ResponseEntity<Map<String, Object>> getAllAdvertisementsByFilter(

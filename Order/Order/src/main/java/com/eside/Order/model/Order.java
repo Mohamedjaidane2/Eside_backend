@@ -43,5 +43,6 @@ public class Order {
     private DiscountRequest discountRequest;
 
     private double orderAmount;
+    private double seller_benefits;
 
 }

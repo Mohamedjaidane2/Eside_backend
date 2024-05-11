@@ -260,6 +260,18 @@ public class AdvertismentServiceImpl implements AdvertismentService {
     }
 
     @Override
+    public SuccessDto changerAdvertismentStatusWhilePayment(Long OrderId,Long advertismentId) {
+        Advertisment existingAdvertisement = advertismentRepository.findById(advertismentId)
+                .orElseThrow(()-> new EntityNotFoundException("Advertisement not found")
+                );
+                existingAdvertisement.setAdvertisementSoldStatusEnum(AdvertisementSoldStatusEnum.SOLD);
+                advertismentRepository.save(existingAdvertisement);
+        return SuccessDto.builder()
+                .message(SuccessMessage.STATUS_CHANGED)
+                .build();
+    }
+
+    @Override
     public Map<String, Object> getAllBySubCategoryName(String CategoryName, Long userAccoundId, int page , int size) {
         try {
         List<AdvertisementDto> advertisment = new ArrayList<AdvertisementDto>();
@@ -344,5 +356,29 @@ public class AdvertismentServiceImpl implements AdvertismentService {
          return advertisementDtoList;
         }
         return advertisementDtoList;
+    }
+
+    @Override
+    public boolean isAvailable(Long Id) {
+        Advertisment advertisement = advertismentRepository.findById(Id)
+                .orElseThrow(()-> new EntityNotFoundException("Advertisement not found")
+                );
+        if (advertisement.getAdvertisementSoldStatusEnum()==AdvertisementSoldStatusEnum.AVAILABLE){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
+    public SuccessDto deleteOrder(Long advertismentId) {
+        Advertisment advertisement = advertismentRepository.findById(advertismentId)
+                .orElseThrow(()-> new EntityNotFoundException("Advertisement not found")
+                );
+        advertisement.setOrderId(null);
+        advertisement.setAdvertisementSoldStatusEnum(AdvertisementSoldStatusEnum.AVAILABLE);
+        return SuccessDto.builder()
+                .message("Updated !")
+                .build();
     }
 }

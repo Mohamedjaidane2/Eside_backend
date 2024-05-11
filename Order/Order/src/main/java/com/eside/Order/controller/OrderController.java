@@ -42,7 +42,7 @@ public class OrderController {
     }
     @PutMapping("/confirm/{orderId}")
     public ResponseEntity<SuccessDto> confirmOrderById(@PathVariable Long orderId) {
-        return ResponseEntity.ok(orderService.confirmOrderById(orderId));
+        return ResponseEntity.ok(orderService.confirmOrder(orderId));
     }
 
     @GetMapping("/getById/{orderId}")

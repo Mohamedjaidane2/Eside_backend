@@ -8,4 +8,7 @@ public enum OrderStatusEnum {
     DELIVERED,
     PAYMENT_RECEIVED,
     CANCELLED,
+    CONFIRMED, // La commande a été acceptée par le vendeur
+    LISTED_FOR_WAITING,
+
 }

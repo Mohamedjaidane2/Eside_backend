@@ -38,7 +38,7 @@ public interface AdvertismentService {
 
     List<AdvertisementDto> getTop10BySubCategoryNameNoAuth(String CategoryName);
     List<AdvertisementDto> getTop10BySubCategoryNamewithAuth(String CategoryName, Long userAccoundId);
-
+    public SuccessDto changerAdvertismentStatusWhilePayment(Long OrderId,Long advertismentId);
     List<AdvertisementDto> getTop10ByCreationDate(Long userAccoundId);
     List<AdvertisementDto> getTop10ByCreationDateNoAuth();
 
@@ -46,5 +46,7 @@ public interface AdvertismentService {
 
     List<AdvertisementDto> getFavoritesByAccount(Long userAccoundId);
 
+    boolean isAvailable (Long Id);
 
+    SuccessDto deleteOrder(Long advertismentId);
 }

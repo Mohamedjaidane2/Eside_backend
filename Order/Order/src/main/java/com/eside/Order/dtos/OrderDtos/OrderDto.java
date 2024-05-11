@@ -32,6 +32,8 @@ public class OrderDto {
 
     private Long reciverId;
 
+    private double seller_benefits;
+
     public static List<OrderDto> customListMapping(List<Order> orders) {
         if(orders==null) return null;
         ArrayList<OrderDto> orderDtoArrayList = new ArrayList<>();
@@ -58,6 +60,7 @@ public class OrderDto {
                 .orderDate(order.getOrderDate())
                 .orderStatus(order.getOrderStatus())
                 .senderId(order.getSenderId())
+                .seller_benefits(order.getSeller_benefits())
                 .reciverId(order.getReciverId())
                 .advertisementId(order.getAdvertisementId())
                 .build();
