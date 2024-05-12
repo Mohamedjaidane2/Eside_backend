@@ -35,6 +35,6 @@ spring:
         - id: payment
           uri: http://localhost:8094
           predicates:
-            - Path= /api/bank-data/** , /api/transactions/** , /api/wallet/**
+            - Path= /api/bank-data/** , /api/transactions/** , /api/wallet/** , /api/payment/**
   application:
     name: gateway

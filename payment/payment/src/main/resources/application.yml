@@ -3,3 +3,7 @@ spring:
     name: payment-microservice
   config:
     import: optional:configserver:http://localhost:8888
+flouci:
+  app_token: "c5d6ca4d-988e-4f24-879d-18dda1427da1"
+  app_secret: "64339d2f-b5c8-4fb7-bcc3-66acbd9c3379"
+  developer_tracking_id : "87aa775c-11d2-4abd-aecb-ee65861f4850"

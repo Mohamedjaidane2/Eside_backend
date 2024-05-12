@@ -221,9 +221,9 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDto>filtredList = new ArrayList<>();
         List<Order> orderList = orderRepository.findAllByReciverIdOrderByOrderDateDesc(accountId);
         for(Order o : orderList){
-            if(o.getOrderStatus()!=OrderStatusEnum.AWAITING_CONFIRMATION){
+           // if(o.getOrderStatus()!=OrderStatusEnum.AWAITING_CONFIRMATION){
                 filtredList.add(OrderDto.customMapping(o));
-            }
+            //}
         }
         return filtredList;
     }
