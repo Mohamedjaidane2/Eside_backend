@@ -15,6 +15,6 @@ public class FeedBackUpdateDto {
 
     private String description;
 
-    private int Stars;
+    private double stars;
 
 }

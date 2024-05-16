@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,7 +42,9 @@ public class User implements UserDetails {
     @Column(name = LAST_NAME, nullable = false)
     private String lastName;
 
-    @Column(name = EMAIL)
+    private LocalDate dateOfBirth;
+
+    @Column(name = EMAIL,unique = true)
     private String email;
 
     @Column(name = PASSWORD, nullable = false)
@@ -56,7 +59,8 @@ public class User implements UserDetails {
 
     private Long accountId;
 
-
+    private boolean accountLocked;
+    private boolean enabled;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getName()));
@@ -79,7 +83,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !accountLocked;
     }
 
     @Override
@@ -89,6 +93,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

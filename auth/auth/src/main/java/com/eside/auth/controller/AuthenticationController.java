@@ -6,7 +6,10 @@ import com.eside.auth.dtos.RegisterRequest;
 import com.eside.auth.dtos.UserDTO;
 import com.eside.auth.model.User;
 import com.eside.auth.service.AuthenticationService;
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,14 +20,17 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
-    ) {
-        return ResponseEntity.ok(service.register(request));
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<?> register(
+            @RequestBody @Valid RegisterRequest request
+    ) throws MessagingException {
+        service.registerWithEmailValidation(request);
+        return ResponseEntity.accepted().build();
     }
 
+
     @GetMapping("/check-auth")
-    public ResponseEntity<?> isExpired(@RequestHeader(name = "Authorization") String token) {
+    public ResponseEntity<?> isExpired(@RequestParam("token") String token) {
         if (token == null || token.isEmpty()) {
             return ResponseEntity.badRequest().body(false);
         }
@@ -37,10 +43,15 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.getCurrentUserInfo(token));
     }
 
+    @GetMapping("/activate-account")
+    public void confirm(@RequestParam String token) throws MessagingException {
+        service.activateAccount(token);
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authentication(
-            @RequestBody AuthenticationRequest request
+            @RequestBody @Valid AuthenticationRequest request
     ) {
         return ResponseEntity.ok(service.authenticate(request));
     }

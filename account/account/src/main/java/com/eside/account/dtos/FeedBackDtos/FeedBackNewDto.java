@@ -15,7 +15,7 @@ public class FeedBackNewDto {
 
     private String description;
 
-    private int Stars;
+    private double stars;
 
     private String senderAccountName;
 

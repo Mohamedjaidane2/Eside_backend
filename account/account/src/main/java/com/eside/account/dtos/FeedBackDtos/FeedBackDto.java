@@ -20,7 +20,7 @@ public class FeedBackDto {
 
     private String description;
 
-    private int Stars;
+    private double stars;
 
     private Date creationDate;
 
@@ -32,7 +32,7 @@ public class FeedBackDto {
         return FeedBackDto.builder()
                 .id(feedBack.getId())
                 .description(feedBack.getDescription())
-                .Stars(feedBack.getStars())
+                .stars(feedBack.getStars())
                 .creationDate(feedBack.getCreationDate())
                 .reciverAccountName(feedBack.getReceiverAccount().getAccountName())
                 .senderAccountName(feedBack.getSenderAccount().getAccountName())

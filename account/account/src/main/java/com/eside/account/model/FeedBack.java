@@ -36,5 +36,5 @@ public class FeedBack {
     @Column(name = "creation_date", updatable = false)
     private Date creationDate;
 
-    private int Stars;
+    private double Stars;
 }
