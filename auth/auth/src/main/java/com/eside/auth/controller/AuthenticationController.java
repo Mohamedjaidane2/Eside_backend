@@ -29,8 +29,8 @@ public class AuthenticationController {
     }
 
 
-    @GetMapping("/check-auth")
-    public ResponseEntity<?> isExpired(@RequestParam("token") String token) {
+    @GetMapping("/check-auth/{token}")
+    public ResponseEntity<?> isExpired(@PathVariable String token) {
         if (token == null || token.isEmpty()) {
             return ResponseEntity.badRequest().body(false);
         }

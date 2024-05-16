@@ -175,7 +175,7 @@ public class AuthenticationService {
     }
 
     public Boolean isExpired(String token) {
-        String jwt = token.substring(7, token.length());
+        String jwt = token;
         if(jwt.equals("null")) return false;
         boolean validate = jwtService.validateAccessToken(jwt);
         if (!validate) return validate;
