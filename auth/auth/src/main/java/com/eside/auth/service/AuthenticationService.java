@@ -1,6 +1,5 @@
 package com.eside.auth.service;
 
-import com.eside.EmailSender.model.EmailTemplateName;
 import com.eside.auth.client.AccountClient;
 import com.eside.auth.client.EmailClient;
 import com.eside.auth.config.JwtService;
@@ -9,9 +8,9 @@ import com.eside.auth.dtos.AuthenticationResponse;
 import com.eside.auth.dtos.RegisterRequest;
 import com.eside.auth.dtos.UserDTO;
 import com.eside.auth.exception.EntityNotFoundException;
-import com.eside.auth.exception.InvalidOperationException;
 import com.eside.auth.externalData.Account;
 import com.eside.auth.externalData.EmailStructure;
+import com.eside.auth.externalData.EmailTemplateName;
 import com.eside.auth.externalData.NewAccountDto;
 import com.eside.auth.model.Role;
 import com.eside.auth.model.Token;

@@ -1,6 +1,5 @@
 package com.eside.auth.externalData;
 
-import com.eside.EmailSender.model.EmailTemplateName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
