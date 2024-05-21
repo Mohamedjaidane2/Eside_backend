@@ -1,0 +1,306 @@
+version: '3.8'
+
+services:
+  config-server:
+    image: config-server-image
+    build: ./config-server/config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - microservice-network
+
+  discovery-server:
+    image: discovery-server-image
+    build: ./discovery/discovery
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    networks:
+      - microservice-network
+
+  account-service:
+    image: account-service-image
+    build: ./account/account
+    container_name: account-service
+    ports:
+      - "8093:8093"
+    restart: on-failure
+    depends_on:
+      - config-server
+      - discovery-server
+    #  links:
+    #    - payment-application
+    #    - advertisement-application
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://account-mysql:3306/eside-account?createDatabaseIfNotExist=true&useSSL=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+    networks:
+      - microservice-network
+
+  account-mysql:
+    restart: unless-stopped
+    image: mysql:8.0
+    container_name: account-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: eside-account
+    ports:
+      - "3306:3306"
+    volumes:
+      - account-mysql-data:/var/lib/mysql
+    networks:
+      - microservice-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOSTS: account-mysql,auth-mysql,advertisement-mysql,notification-mysql,order-mysql,payment-mysql
+      PMA_USER: root
+      PMA_PASSWORD: ''
+      UPLOAD_LIMIT: 300M
+    ports:
+      - "8080:80"
+    depends_on:
+      - account-mysql
+      - auth-mysql
+      - advertisement-mysql
+      - notification-mysql
+      - order-mysql
+      - payment-mysql
+    networks:
+      - microservice-network
+
+  gateway-application:
+    image: gateway-application-image
+    build: ./gateway/gateway
+    container_name: gateway-application
+    ports:
+      - "8222:8222"
+    depends_on:
+      - config-server
+      - discovery-server
+      - account-service
+      - advertisement-application
+      - email-notification-application
+      - order-application
+      - payment-application
+    environment:
+      - SPRING_PROFILES_ACTIVE= prod
+      - SPRING_CLOUD_GATEWAY_ROUTES[0]_URI=http://auth-application:8090
+      - SPRING_CLOUD_GATEWAY_ROUTES[0]_ID=auth
+      - SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]=Path=/api/v1/auth/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[1]_URI=http://account-service:8093
+      - SPRING_CLOUD_GATEWAY_ROUTES[1]_ID=account
+      - SPRING_CLOUD_GATEWAY_ROUTES[1]_PREDICATES[0]=Path=/api/account/**,/api/feedBack/**,/api/information/**,/api/favorite/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[2]_URI=http://advertisement-application:8095
+      - SPRING_CLOUD_GATEWAY_ROUTES[2]_ID=advertisement
+      - SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]=Path=/api/advertisement/**,/api/image/**,/api/product/**,/api/subcategories/**,/api/categories/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[3]_URI=http://email-notification-application:8091
+      - SPRING_CLOUD_GATEWAY_ROUTES[3]_ID=emailSender
+      - SPRING_CLOUD_GATEWAY_ROUTES[3]_PREDICATES[0]=Path=/api/v1/mail/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[4]_URI=http://order-application:8097
+      - SPRING_CLOUD_GATEWAY_ROUTES[4]_ID=order
+      - SPRING_CLOUD_GATEWAY_ROUTES[4]_PREDICATES[0]=Path=/api/discount-request/**,/api/order/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[5]_URI=http://payment-application:8094
+      - SPRING_CLOUD_GATEWAY_ROUTES[5]_ID=payment
+      - SPRING_CLOUD_GATEWAY_ROUTES[5]_PREDICATES[0]=Path=/api/bank-data/**,/api/transactions/**,/api/wallet/**,/api/payment/**
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+    networks:
+      - microservice-network
+
+  auth-application:
+    image: auth-application-image
+    build: ./auth/auth
+    container_name: auth-application
+    ports:
+      - "8090:8090"
+    depends_on:
+      - config-server
+      - discovery-server
+    #  links:
+    #    - account-service
+    #    - email-notification-application
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://auth-mysql:3306/eside-auth?createDatabaseIfNotExist=true&useSSL=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+    networks:
+      - microservice-network
+
+  auth-mysql:
+    restart: unless-stopped
+    image: mysql:8.0
+    container_name: auth-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: eside-auth
+    ports:
+      - "3307:3306"
+    volumes:
+      - auth-mysql-data:/var/lib/mysql
+    networks:
+      - microservice-network
+
+  advertisement-application:
+    image: advertisement-application-image
+    build: ./advertisment/advertisment
+    container_name: advertisement-application
+    ports:
+      - "8095:8095"
+    depends_on:
+      - config-server
+      - discovery-server
+    #  links:
+    #    - account-service
+    #    - order-application
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://advertisement-mysql:3306/eside-advertisement?createDatabaseIfNotExist=true&useSSL=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+    networks:
+      - microservice-network
+
+  advertisement-mysql:
+    restart: unless-stopped
+    image: mysql:8.0
+    container_name: advertisement-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: eside-advertisement
+    ports:
+      - "3308:3306"
+    volumes:
+      - advertisement-mysql-data:/var/lib/mysql
+    networks:
+      - microservice-network
+
+  email-notification-application:
+    image: email-notification-application-image
+    build: ./EmailSender/EmailSender
+    container_name: email-notification-application
+    ports:
+      - "8091:8091"
+    depends_on:
+      - config-server
+      - discovery-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://notification-mysql:3306/eside-notification?createDatabaseIfNotExist=true&useSSL=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+    networks:
+      - microservice-network
+
+  notification-mysql:
+    restart: unless-stopped
+    image: mysql:8.0
+    container_name: notification-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: eside-notification
+    ports:
+      - "3309:3306"
+    volumes:
+      - notification-mysql-data:/var/lib/mysql
+    networks:
+      - microservice-network
+
+  order-application:
+    image: order-application-image
+    build: ./Order/Order
+    container_name: order-application
+    ports:
+      - "8097:8097"
+    depends_on:
+      - config-server
+      - discovery-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://order-mysql:3306/eside-order?createDatabaseIfNotExist=true&useSSL=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+    networks:
+      - microservice-network
+
+  order-mysql:
+    restart: unless-stopped
+    image: mysql:8.0
+    container_name: order-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: eside-order
+    ports:
+      - "3310:3306"
+    volumes:
+      - order-mysql-data:/var/lib/mysql
+    networks:
+      - microservice-network
+
+  payment-application:
+    image: payment-application-image
+    build: ./payment/payment
+    container_name: payment-application
+    ports:
+      - "8094:8094"
+    depends_on:
+      - config-server
+      - discovery-server
+    #links:
+    #  - account-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://payment-mysql:3306/eside-payment?createDatabaseIfNotExist=true&useSSL=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+    networks:
+      - microservice-network
+
+  payment-mysql:
+    restart: unless-stopped
+    image: mysql:8.0
+    container_name: payment-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: eside-payment
+    ports:
+      - "3311:3306"
+    volumes:
+      - payment-mysql-data:/var/lib/mysql
+    networks:
+      - microservice-network
+
+networks:
+  microservice-network:
+    driver: bridge
+
+volumes:
+  account-mysql-data:
+  auth-mysql-data:
+  advertisement-mysql-data:
+  notification-mysql-data:
+  order-mysql-data:
+  payment-mysql-data:
+

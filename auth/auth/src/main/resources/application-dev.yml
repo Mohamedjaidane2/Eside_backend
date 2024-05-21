@@ -1,0 +1,21 @@
+spring:
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: use_defaults
+  config:
+    import: optional:configserver:http://localhost:8888
+
+#CROS origin config
+eside:
+  saas:
+    cors:
+      cross-origins: http://localhost:4200
+
+#Variables
+feign:
+  client:
+    account:
+      url: http://localhost:8222/api/account
+    email:
+      url: http://localhost:8222/api/v1/mail

@@ -1,0 +1,19 @@
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: jaidanemohammed@gmail.com
+    password: ykty vodj nifa xrtv
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+
+logging.level:
+  org.springframework.retry: trace
+  com.netflix.discovery: trace

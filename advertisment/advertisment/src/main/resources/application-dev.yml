@@ -1,0 +1,13 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+
+#Variables
+feign:
+  client:
+    account:
+      url: http://localhost:8222/api/account
+    favorite:
+      url: http://localhost:8222/api/favorite
+    order:
+      url: http://localhost:8222/api/order

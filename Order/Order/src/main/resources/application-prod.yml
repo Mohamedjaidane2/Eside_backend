@@ -1,0 +1,11 @@
+
+
+#Variables
+feign:
+  client:
+    account:
+      url: gateway-application:8222/api/account
+    advertisement:
+      url: gateway-application:8222/api/advertisement
+    payment:
+      url: gateway-application:8222/api/wallet

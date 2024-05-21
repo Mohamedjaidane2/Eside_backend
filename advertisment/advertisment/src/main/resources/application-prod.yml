@@ -1,0 +1,16 @@
+
+
+logging.level:
+  org.springframework.retry: trace
+  com.netflix.discovery: trace
+
+
+#Variables
+feign:
+  client:
+    account:
+      url: gateway-application:8222/api/account
+    favorite:
+      url: gateway-application:8222/api/favorite
+    order:
+      url: gateway-application:8222/api/order

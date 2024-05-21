@@ -1,5 +1,10 @@
 spring:
   application:
     name: account-microservice
-  config:
-    import: optional:configserver:http://localhost:8888
+  profiles:
+    active: prod
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 20

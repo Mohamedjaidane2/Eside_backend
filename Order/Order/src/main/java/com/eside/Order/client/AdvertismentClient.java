@@ -6,12 +6,14 @@ import com.eside.Order.dtos.SuccessDto;
 import com.eside.Order.externalData.Account;
 import com.eside.Order.externalData.Advertisment;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "advertisment-service",url = "http://localhost:8222/api/advertisement" , configuration = FeignConfig.class)
+@FeignClient(name = "advertisment-service",url = "${feign.client.advertisement.url}" , configuration = FeignConfig.class)
+@Profile({"dev", "prod"})
 public interface AdvertismentClient {
     @GetMapping("/{advertisementId}")
     Advertisment getAdvertismentByIdFromOrder (@PathVariable Long advertisementId);

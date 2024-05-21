@@ -1,0 +1,16 @@
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone : http://${eureka.instance.hostname}:${server.port}
+
+server:
+  port: 8761
+
+logging.level:
+  org.springframework.retry: trace
+  com.netflix.discovery: trace

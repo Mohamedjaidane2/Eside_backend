@@ -1,0 +1,12 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+#Variables
+feign:
+  client:
+    account:
+      url: http://localhost:8222/api/account
+    advertisement:
+      url: http://localhost:8222/api/advertisement
+    payment:
+      url: http://localhost:8222/api/wallet

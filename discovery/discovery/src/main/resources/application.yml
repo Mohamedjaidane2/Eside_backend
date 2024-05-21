@@ -1,6 +1,10 @@
 spring:
+  profiles:
+    active: prod
   application:
     name: discovery-server
-  config:
-    import: optional:configserver:http://localhost:8888
-
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 20

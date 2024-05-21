@@ -1,0 +1,22 @@
+spring:
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: use_defaults
+
+logging.level:
+  org.springframework.retry: trace
+  com.netflix.discovery: trace
+#CROS origin config
+eside:
+  saas:
+    cors:
+      cross-origins: http://localhost:4200
+
+#Variables
+feign:
+  client:
+    account:
+      url: gateway-application:8222/api/account
+    email:
+      url: gateway-application:8222/api/v1/mail
