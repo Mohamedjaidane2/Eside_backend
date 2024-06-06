@@ -123,3 +123,7 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             mkdir -p ci-cd
+            mv docker-compose.yml ci-cd/
+            cd ci-cd
+            docker-compose -f docker-compose.yml pull -q
+            docker-compose -f docker-compose.yml up -d
