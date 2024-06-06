@@ -123,7 +123,7 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             mkdir -p ci-cd
-            mv docker-compose.yml ci-cd/
+            scp -P ${{ secrets.VPS_PORT }} -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
             cd ci-cd
             docker-compose -f docker-compose.yml pull -q
             docker-compose -f docker-compose.yml up -d
