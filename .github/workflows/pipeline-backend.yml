@@ -23,7 +23,7 @@ env:
 
 jobs:
   compile:
-    runs-on: self-hosted
+    runs-on: ubuntu
     name: Compile project
     steps:
       - name : Checkout code
@@ -47,7 +47,7 @@ jobs:
             cd ../..;
           done
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu
     name: Build Backend
     needs: [compile]
     steps:
@@ -73,7 +73,7 @@ jobs:
           done
 
   build-image:
-    runs-on: self-hosted
+    runs-on: ubuntu
     needs: [build]
     name: Build Docker Image
     steps:
@@ -107,7 +107,7 @@ jobs:
           done
 
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu
     needs: [ build-image ]
     name: Deploy Backend
     steps:
