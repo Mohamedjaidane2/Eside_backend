@@ -133,4 +133,3 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             scp docker-compose.yml -p ${{ secrets.VPS_PORT }} ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
-            scp docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
