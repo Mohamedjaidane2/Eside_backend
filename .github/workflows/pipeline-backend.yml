@@ -125,8 +125,14 @@ jobs:
             mkdir -p ci-cd
 
       - name: Copy docker-compose file
-        run: |
-            rsync -avz -e "ssh -p ${{ secrets.VPS_PORT }} -o StrictHostKeyChecking=no" docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+              echo "${{ secrets.VPS_PASSWORD }}" | sshpass ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }} ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "cat > ci-cd/docker-compose.yml" < docker-compose.yml
 
       - name: Deploy application
         uses: appleboy/ssh-action@master
@@ -136,6 +142,6 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            cd ci-cd
-            docker-compose -f docker-compose.yml pull -q
-            docker-compose -f docker-compose.yml up -d
+                  cd ci-cd
+                  docker-compose -f docker-compose.yml pull -q
+                  docker-compose -f docker-compose.yml up -d
