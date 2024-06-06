@@ -7,4 +7,4 @@ spring:
       retry:
         max-attempts: 20
   profiles:
-    active: dev
+    active: prod
