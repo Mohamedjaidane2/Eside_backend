@@ -2,7 +2,7 @@ spring:
   application:
     name: account-microservice
   profiles:
-    active: prod
+    active: dev
   cloud:
     config:
       fail-fast: true

@@ -3,6 +3,7 @@ package com.eside.account.service.impl;
 import com.eside.account.client.WalletClient;
 import com.eside.account.dtos.AccountDtos.AccountDto;
 import com.eside.account.dtos.AccountDtos.NewAccountDto;
+import com.eside.account.dtos.FeedBackDtos.FeedBackDto;
 import com.eside.account.dtos.SuccessDto;
 import com.eside.account.exception.EntityNotFoundException;
 import com.eside.account.exception.InvalidOperationException;
@@ -13,6 +14,7 @@ import com.eside.account.model.Information;
 import com.eside.account.repository.AccountRepository;
 import com.eside.account.repository.InformationRepository;
 import com.eside.account.service.AccountService;
+import com.eside.account.service.FeedBackService;
 import com.eside.account.utils.SuccessMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final InformationRepository informationRepository;
     private final WalletClient walletClient;
+    private final FeedBackService feedBackService;
     @Override
     @Transactional
     public Account createAccount(NewAccountDto newAccountDto) {
@@ -115,7 +118,23 @@ public class AccountServiceImpl implements AccountService {
         if (account.isEmpty()) {
             throw new EntityNotFoundException("Account not found");
         }
-        return AccountDto.customMapping(account.get());
+        double stars = 0.0;
+        double averageStars = 0.0;
+        List<FeedBackDto> getAllRecivedFeedBackByAccount = feedBackService.getAllRecivedFeedBackByAccount(id);
+
+        if (getAllRecivedFeedBackByAccount != null && !getAllRecivedFeedBackByAccount.isEmpty()) {
+            for (FeedBackDto feedBackDto : getAllRecivedFeedBackByAccount) {
+                stars += feedBackDto.getStars();
+            }
+            averageStars = stars / getAllRecivedFeedBackByAccount.size();
+            System.out.println("Average stars: " + averageStars);
+        } else {
+
+            System.out.println("No feedback available.");
+        }
+        AccountDto accountDto = AccountDto.customMapping(account.get());
+        accountDto.setStars(averageStars);
+        return accountDto;
     }
 
     @Override

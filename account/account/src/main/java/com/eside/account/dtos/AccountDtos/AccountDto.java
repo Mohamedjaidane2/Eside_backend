@@ -1,5 +1,6 @@
 package com.eside.account.dtos.AccountDtos;
 
+import com.eside.account.dtos.InformationDtos.InformationDto;
 import com.eside.account.model.Account;
 import com.eside.account.model.Information;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,8 @@ public class AccountDto {
     private boolean isActive;
     private String firstName;
     private String lastName;
+    private double stars ;
+    private InformationDto informationDto;
 
     public static AccountDto customMapping(Account account) {
         return AccountDto.builder()
@@ -31,6 +34,7 @@ public class AccountDto {
                 .accountName(account.getAccountName())
                 .createdAt(account.getCreationDate())
                 .updateAt(account.getUpdateDate())
+                .informationDto(InformationDto.customMapping(account.getInformation()))
                 .isActive(account.isActive())
                 .build();
     }
