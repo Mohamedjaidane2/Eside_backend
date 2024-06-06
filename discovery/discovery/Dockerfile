@@ -1,7 +1,14 @@
+# Use an official OpenJDK runtime as a parent image
 FROM openjdk:17-jdk
 
+# Set the working directory
 WORKDIR /app
 
-ADD target/discovery-0.0.1-SNAPSHOT.jar /app/app.jar
+# Set build argument for the JAR file name
+ARG JAR_FILE
 
-ENTRYPOINT ["java","-jar","app.jar"]
+# Copy the built JAR file into the container
+ADD ${JAR_FILE} /app/app.jar
+
+# Run the JAR file
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
