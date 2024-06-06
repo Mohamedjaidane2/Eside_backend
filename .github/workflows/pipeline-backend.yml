@@ -114,7 +114,7 @@ jobs:
     needs: [ build-image ]
     name: Deploy Backend
     steps:
-      - name: Deploy to VPS
+      - name: create deployment folder
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_IP }}
@@ -123,7 +123,13 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             mkdir -p ci-cd
-            scp -P ${{ secrets.VPS_PORT }} -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
-            cd ci-cd
-            docker-compose -f docker-compose.yml pull -q
-            docker-compose -f docker-compose.yml up -d
+
+      - name: Copy docker-compose file
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            scp docker-compose.yml {{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
