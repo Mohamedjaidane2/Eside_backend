@@ -94,17 +94,17 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: build & push to DOCKER_HUB
         uses: docker/build-push-action@v3
-                - name: Build & push Docker images
-                run: |
-                  for module in ${{ env.MODULES }}; do
-                    echo "---------- $module ----------";
-                    cd $module;
-                    echo "Building Docker image...";
-                    docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/$(basename $module):latest .
-                    docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$(basename $module):latest
-                    echo "Docker image for $module pushed to Docker Hub.";
-                    cd ../..;
-                  done
+      - name: Build & push Docker images
+        run: |
+          for module in ${{ env.MODULES }}; do
+            echo "---------- $module ----------";
+            cd $module;
+            echo "Building Docker image...";
+            docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/$(basename $module):latest .
+            docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$(basename $module):latest
+            echo "Docker image for $module pushed to Docker Hub.";
+            cd ../..;
+          done
 
   deploy:
     runs-on: self-hosted
