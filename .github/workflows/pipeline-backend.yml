@@ -102,8 +102,9 @@ jobs:
             echo "---------- $module ----------"
             cd $module
             echo "Building Docker image..."
-            docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/$(basename $module):latest .
-            docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$(basename $module):latest
+            module_name=$(basename $module | tr '[:upper:]' '[:lower:]')
+            docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest .
+            docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest
             echo "Docker image for $module pushed to Docker Hub."
             cd - > /dev/null
           done
