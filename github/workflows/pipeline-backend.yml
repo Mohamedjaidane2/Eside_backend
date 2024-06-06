@@ -1,0 +1,125 @@
+name: Eside Backend Pipeline
+
+on :
+  push:
+    branches:
+      - ci/pipeline
+    paths:
+      - account/**
+      - advertisment/**
+      - auth/**
+      - config-server/**
+      - discovery/**
+      - EmailSender/**
+      - gateway/**
+      - Order/**
+      - payment/**
+      - 'docker-compose.yml'
+      - .github/workflows/*-backend.yml
+
+env:
+  MODULES: "EmailSender/EmailSender Order/Order account/account advertisment/advertisment auth/auth config-server/config-server discovery/discovery gateway/gateway payment/payment"
+
+
+jobs:
+  compile:
+    runs-on: self-hosted
+    name: Compile project
+    steps:
+      - name : Checkout code
+        uses : actions/checkout@v4
+        with :
+          fetch-depth : 0
+
+      - name: Setup JDK
+        uses : actions/setup-jdk@v4
+        with :
+          java-version: 17
+          distribution : 'correto'
+      - name : Compile projects
+        run : |
+          for module in ${{ env.MODULES }}; do
+            echo "---------- $module ----------";
+            cd $module;
+            echo "Compiling the code...";
+            mvn compile;
+            echo "Compile complete.";
+            cd ../..;
+          done
+  build:
+    runs-on: self-hosted
+    name: Build Backend
+    needs: [compile]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-jdk@v4
+        with:
+          java-version: 17
+          distribution: 'correto'
+      - name: Build project
+        run: |
+          for module in ${{ env.MODULES }}; do
+            echo "---------- $module ----------";
+            cd $module;
+            echo "Building the code...";
+            mvn package -DskipTests;
+            echo "Compile complete.";
+            cd ../..;
+          done
+
+  build-image:
+    runs-on: self-hosted
+    needs: [build]
+    name: Build Docker Image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-jdk@v4
+        with:
+          java-version: 17
+          distribution: 'correto'
+      - name: Login to DOCKER_HUB
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: build & push to DOCKER_HUB
+        uses: docker/build-push-action@v3
+                - name: Build & push Docker images
+                run: |
+                  for module in ${{ env.MODULES }}; do
+                    echo "---------- $module ----------";
+                    cd $module;
+                    echo "Building Docker image...";
+                    docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/$(basename $module):latest .
+                    docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$(basename $module):latest
+                    echo "Docker image for $module pushed to Docker Hub.";
+                    cd ../..;
+                  done
+
+  deploy:
+    runs-on: self-hosted
+    needs: [ build-image ]
+    name: Deploy Backend
+    steps:
+      - name: Create deployment folder
+        run : ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_VPS_IP }} "mkdir -p ci-cd"
+      - name: Copy docker-compose file
+        run: scp dockercompose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_VPS_IP }}:ci-cd/docker-compose.yml
+
+      - name: Set ENV variables and deploy
+        run : |
+          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
+          cd ci-cd
+          docker-compose -f docker-compose.yml pull -q 
+          docker-compose -f docker-compose.yml up -d 
+          EOF
