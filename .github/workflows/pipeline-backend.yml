@@ -115,14 +115,14 @@ jobs:
     name: Deploy Backend
     steps:
       - name: Create deployment folder
-        run: ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
+        run: ssh -p ${{ secrets.VPS_PORT }} ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
 
       - name: Copy docker-compose file
-        run: scp docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
+        run: scp -p ${{ secrets.VPS_PORT }} docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
 
       - name: Set ENV variables and deploy
         run: |
-          ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
+          ssh -p ${{ secrets.VPS_PORT }} ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
           cd ci-cd
           docker-compose -f docker-compose.yml pull -q
           docker-compose -f docker-compose.yml up -d
