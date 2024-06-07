@@ -5,7 +5,7 @@ FROM openjdk:17-jdk
 WORKDIR /app
 
 # Set build argument for the JAR file name
-ARG JAR_FILE=*.jar
+ARG JAR_FILE=target/*.jar
 
 # Copy the built JAR file into the container
 COPY ${JAR_FILE} /app/app.jar
