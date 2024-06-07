@@ -126,8 +126,8 @@ jobs:
       - name: Print current working directory
         run: pwd
 
-      - name: List files in workspace for debugging
-        run: ls -la
+      - name: List all files in the repository
+        run: ls -laR /home/runner/work/Eside_backend/Eside_backend
 
       - name: Verify docker-compose.yml exists
         run: cat docker-compose.yml
