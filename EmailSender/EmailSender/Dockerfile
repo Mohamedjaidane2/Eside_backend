@@ -5,10 +5,10 @@ FROM openjdk:17-jdk
 WORKDIR /app
 
 # Set build argument for the JAR file name
-ARG JAR_FILE=target/EmailSender-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=*.jar
 
 # Copy the built JAR file into the container
-COPY "${JAR_FILE}" /app/app.jar
+COPY ${JAR_FILE} /app/app.jar
 
 # Run the JAR file
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

@@ -40,12 +40,11 @@ jobs:
         run: |
           for module in ${{ env.MODULES }}; do
             echo "---------- $module ----------"
-            cd $module
+            cd $module/$module
             echo "Compiling the code..."
             mvn compile
             echo "Compile complete."
-            cd ..
-            cd ..
+            cd ../..
           done
 
   build:
@@ -68,7 +67,7 @@ jobs:
         run: |
           for module in ${{ env.MODULES }}; do
             echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
-            cd $module
+            cd $module/$module
             echo "Building the code..."
             mvn package -DskipTests
             echo "Build complete."
@@ -81,8 +80,7 @@ jobs:
               echo "JAR file $JAR_FILE successfully built for $module"
             fi
 
-            cd ..
-            cd ..
+            cd ../..
           done
 
   build-image:
@@ -110,8 +108,12 @@ jobs:
       - name: Build & push Docker images
         run: |
           for module in ${{ env.MODULES }}; do
-             echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
-            cd $module
+            echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
+            cd $module/$module
+            echo "Copying JAR file for Docker build context..."
+            JAR_FILE=$(find target -name "*.jar")
+            cp $JAR_FILE .
+
             echo "Building Docker image..."
             module_name=$(basename $module | tr '[:upper:]' '[:lower:]')
             docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest .
@@ -122,7 +124,7 @@ jobs:
               echo "Failed to build Docker image for $module."
               exit 1
             fi
-            cd - > /dev/null
+            cd ../..
           done
 
   deploy:
