@@ -117,8 +117,8 @@ jobs:
       - name: Build & Push to DockerHub
         uses: docker/build-push-action@v5
         with:
-          context: ./account/account
-          file: ./account/account/Dockerfile
+          context: ./EmailSender/EmailSender
+          file: ./EmailSender/EmailSenderDockerfile
           push: true
           platforms: linux/amd64
-          tags: account:latest
+          tags: emailsender:latest
