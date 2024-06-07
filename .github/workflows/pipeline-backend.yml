@@ -124,7 +124,5 @@ jobs:
           script: |
             mkdir -p ci-cd
       # Print Docker Compose content from the root directory
-      - name: Print Docker Compose content
-        run: |
-          cat docker-compose.yml
-        working-directory: ${{ github.workspace }}
+      - name: Copy docker-compose file
+        run: scp -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
