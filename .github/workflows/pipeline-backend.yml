@@ -120,8 +120,6 @@ jobs:
           push: true
           platforms: linux/amd64
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/emailsender:${{ steps.extract_version.outputs.VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/emailsender:latest
           build-args: |
-              PROFILE=prod
               APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
