@@ -1,7 +1,14 @@
+# Use an official OpenJDK runtime as a parent image
 FROM openjdk:17-jdk
 
-ARG JAR_FILE=target/*.jar
+# Set the working directory
+WORKDIR /app
 
-COPY ${JAR_FILE} app.jar
+# Set build argument for the JAR file name
+ARG JAR_FILE=target/EmailSender-0.0.1-SNAPSHOT.jar
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+# Copy the built JAR file into the container
+COPY "${JAR_FILE}" /app/app.jar
+
+# Run the JAR file
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
