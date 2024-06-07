@@ -123,6 +123,13 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             mkdir -p ci-cd
-      # Print Docker Compose content from the root directory
-      - name: Copy docker-compose file
-        run: scp -o StrictHostKeyChecking=no -P ${{ secrets.VPS_PORT }} docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
+
+      - name: Copy docker-compose file to VPS
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT }}
+          local: 'docker-compose.yml'
+          remote: '.'
