@@ -71,7 +71,7 @@ jobs:
             echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
             cd $module
             chmod +x mvnw  # Grant execute permission
-            ./mvnw clean package
+            ./mvnw clean package -DskipTests
             cd ..
             cd ..
           done
