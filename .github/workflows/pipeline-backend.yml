@@ -118,7 +118,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./EmailSender/EmailSender
-          file: ./EmailSender/EmailSenderDockerfile
+          file: ./EmailSender/EmailSender/Dockerfile
           push: true
           platforms: linux/amd64
           tags: emailsender:latest
