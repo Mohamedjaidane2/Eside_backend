@@ -1,11 +1,20 @@
-# Use an official OpenJDK runtime as a parent image
+# Build stage
+FROM maven:3.8.7-openjdk-18 AS build
+WORKDIR /build
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Runtime stage
 FROM openjdk:17-jdk
 
-# Set the working directory
+ARG APP_VERSION=0.0.1
+
 WORKDIR /app
+COPY --from=build /build/target/EmailSender-*.jar /app/
 
-# Copy the built JAR file into the container
-COPY target/EmailSender-*.jar /app/app.jar
+ENV JAR_VERSION=${APP_VERSION}
 
-# Run the JAR file
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+
+CMD java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -${JAR_VERSION}.jar
