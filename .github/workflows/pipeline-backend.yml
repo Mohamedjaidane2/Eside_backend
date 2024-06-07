@@ -137,3 +137,15 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           source: "docker-compose.yml"  # Path to your Docker Compose file
           target: "~/ci-cd"  # Destination directory on the remote server
+      - name: Set ENV variable and deploy
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd ci-cd
+            docker compose -f docker-compose.yml pull -q
+            docker compose -f docker-compose.yml up -d
+            EOF
