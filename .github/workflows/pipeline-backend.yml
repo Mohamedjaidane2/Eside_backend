@@ -119,7 +119,4 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/amd64
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/emailsender:latest
-          build-args: |
-              APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
+          tags: emailsender:latest
