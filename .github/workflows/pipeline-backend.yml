@@ -110,13 +110,18 @@ jobs:
       - name: Build & push Docker images
         run: |
           for module in ${{ env.MODULES }}; do
-            echo "---------- $module ----------"
+             echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
             cd $module
             echo "Building Docker image..."
             module_name=$(basename $module | tr '[:upper:]' '[:lower:]')
             docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest .
-            docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest
-            echo "Docker image for $module pushed to Docker Hub."
+            if [ $? -eq 0 ]; then
+              docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest
+              echo "Docker image for $module pushed to Docker Hub."
+            else
+              echo "Failed to build Docker image for $module."
+              exit 1
+            fi
             cd - > /dev/null
           done
 
