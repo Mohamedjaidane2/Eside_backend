@@ -42,7 +42,7 @@ jobs:
             echo "---------- $module ----------"
             cd $module
             echo "Compiling the code..."
-            clean compile
+            ./mvnw clean compile
             echo "Compile complete."
             cd ..
             cd ..
