@@ -42,6 +42,7 @@ jobs:
             echo "---------- $module ----------"
             cd $module
             echo "Compiling the code..."
+            chmod +x mvnw  # Grant execute permission
             ./mvnw clean compile
             echo "Compile complete."
             cd ..
@@ -69,6 +70,7 @@ jobs:
           for module in ${{ env.MODULES }}; do
             echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
             cd $module
+            chmod +x mvnw  # Grant execute permission
             ./mvnw clean compile
             cd ..
             cd ..
