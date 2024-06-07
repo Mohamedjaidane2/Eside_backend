@@ -44,7 +44,8 @@ jobs:
             echo "Compiling the code..."
             mvn compile
             echo "Compile complete."
-            cd - > /dev/null
+            cd ..
+            cd ..
           done
 
   build:
@@ -66,12 +67,13 @@ jobs:
       - name: Build project
         run: |
           for module in ${{ env.MODULES }}; do
-            echo "---------- $module ----------"
-            cd $module
-            echo "Building the code..."
-            mvn package -DskipTests
-            echo "Build complete."
-            cd - > /dev/null
+          echo "---------- $module ----------"
+          cd $module
+          echo "Building the code..."
+          mvn package -DskipTests
+          echo "Build complete."
+          cd ..
+          cd ..
           done
 
   build-image:
