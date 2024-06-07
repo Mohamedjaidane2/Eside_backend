@@ -132,8 +132,10 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-              echo "${{ secrets.VPS_PASSWORD }}" | sshpass ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }} ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "cat > ci-cd/docker-compose.yml" < docker-compose.yml
-
+            mkdir -p ~/ci-cd/
+            cat > ~/docker-compose.yml << 'EOF'
+            $(cat docker-compose.yml)
+            EOF
       - name: Deploy application
         uses: appleboy/ssh-action@master
         with:
