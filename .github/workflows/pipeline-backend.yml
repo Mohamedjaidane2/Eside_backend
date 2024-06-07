@@ -100,8 +100,10 @@ jobs:
             cd $module
             echo "Granting execute permission to mvnw script..."
             chmod +x mvnw  # Grant execute permission to mvnw script
+            module_name=$(basename $module | tr '[:upper:]' '[:lower:]')
+            docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest .
+            docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest
             echo "Building Docker image..."
-            docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/$module:${{ steps.extract_version.outputs.VERSION }} -t ${{ secrets.DOCKERHUB_USERNAME }}/$module:latest --build-arg PROFILE=prod --build-arg APP_VERSION=${{ steps.extract_version.outputs.VERSION }} .
             echo "Docker image built."
             cd ..
             cd ..
