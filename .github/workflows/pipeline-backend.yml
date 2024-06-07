@@ -75,3 +75,44 @@ jobs:
             cd ..
             cd ..
           done
+
+  build-image:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      # Loop through each module to build Docker images
+      - name: Build Docker images
+        run: |
+          for module in ${{ env.MODULES }}; do
+            echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
+            cd $module
+            echo "Granting execute permission to mvnw script..."
+            chmod +x mvnw  # Grant execute permission to mvnw script
+            echo "Building Docker image..."
+            docker build -f docker/backend/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/$module:${{ steps.extract_version.outputs.VERSION }} -t ${{ secrets.DOCKERHUB_USERNAME }}/$module:latest --build-arg PROFILE=prod --build-arg APP_VERSION=${{ steps.extract_version.outputs.VERSION }} .
+            echo "Docker image built."
+            cd ..
+          done
+
+      # Additional steps here (e.g., login to DockerHub, push Docker images, etc.)
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker images
+        run: |
+          for module in ${{ env.MODULES }}; do
+            echo "Pushing Docker images for $module..."
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/$module:${{ steps.extract_version.outputs.VERSION }}
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/$module:latest
+            echo "Docker images pushed for $module."
+          done
