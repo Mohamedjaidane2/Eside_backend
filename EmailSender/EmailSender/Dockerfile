@@ -4,4 +4,4 @@ WORKDIR /app
 
 ADD target/EmailSender-*.jar /app/app.jar
 
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
