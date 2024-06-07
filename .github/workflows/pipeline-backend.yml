@@ -111,8 +111,9 @@ jobs:
         run: |
             for module in ${{ env.MODULES }}; do
               echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
-              cd $module/$module
+              cd $module
               echo "Copying JAR file for Docker build context..."
+              ls -l
               JAR_FILE=$(find target -name "*.jar")
               cp $JAR_FILE .
             
