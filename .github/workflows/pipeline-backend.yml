@@ -98,9 +98,9 @@ jobs:
         run: |
           for module in ${{ env.MODULES }}; do
             echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
+            cd $module
             echo "Granting execute permission to mvnw script..."
             chmod +x mvnw  # Grant execute permission to mvnw script
-            cd $module
             echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
             cd ..
             cd ..
