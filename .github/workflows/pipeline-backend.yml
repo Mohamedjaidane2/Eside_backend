@@ -123,6 +123,8 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             mkdir -p ci-cd
+      # Print Docker Compose content from the root directory
       - name: Print Docker Compose content
         run: |
           cat docker-compose.yml
+        working-directory: ${{ github.workspace }}
