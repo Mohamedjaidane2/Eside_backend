@@ -124,9 +124,6 @@ jobs:
           script: |
             mkdir -p ci-cd
 
-      - name: Print docker-compose.yml content
-        run: cat docker-compose.yml
-
       - name: Copy docker-compose file to VPS
         uses: appleboy/scp-action@master
         with:
