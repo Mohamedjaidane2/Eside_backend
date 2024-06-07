@@ -67,13 +67,22 @@ jobs:
       - name: Build project
         run: |
           for module in ${{ env.MODULES }}; do
-          echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
-          cd $module
-          echo "Building the code..."
-          mvn package -DskipTests
-          echo "Build complete."
-          cd ..
-          cd ..
+            echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
+            cd $module
+            echo "Building the code..."
+            mvn package -DskipTests
+            echo "Build complete."
+
+            JAR_FILE=$(find target -name "*.jar")
+            if [ -z "$JAR_FILE" ]; then
+              echo "ERROR: No JAR file found for $module"
+              exit 1
+            else
+              echo "JAR file $JAR_FILE successfully built for $module"
+            fi
+
+            cd ..
+            cd ..
           done
 
   build-image:
