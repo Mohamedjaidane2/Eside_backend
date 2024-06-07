@@ -124,12 +124,18 @@ jobs:
           script: |
             mkdir -p ci-cd
 
-      - name: Copy docker-compose file to VPS
-        uses: garygrossgarten/github-action-scp@release
-        with:
-          host: ${{ secrets.VPS_IP }}
-          username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
-          port: ${{ secrets.VPS_PORT }}
-          local: 'Eside_backend/docker-compose.yml'  # Ensure this path matches the location of your docker-compose.yml file
-          remote: '.'
+      - name: Setup the private key
+        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
+      - name: Copy docker-compose file
+        run: scp -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
+
+      - name: Set ENV variable and deploy
+        run: |
+                ssh ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} <<EOF
+                export EMAIL_HOST_NAME=${{ secrets.EMAIL_HOST_NAME }}
+                export EMAIL_USER_NAME=${{ secrets.EMAIL_USER_NAME }}
+                export EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+                cd ci-cd
+                docker compose -f docker-compose.yml pull -q
+                docker compose -f docker-compose.yml up -d
+                EOF
