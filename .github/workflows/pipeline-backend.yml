@@ -67,7 +67,7 @@ jobs:
       - name: Build project
         run: |
           for module in ${{ env.MODULES }}; do
-          echo "---------- $module ----------"
+          echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
           cd $module
           echo "Building the code..."
           mvn package -DskipTests
