@@ -126,8 +126,11 @@ jobs:
       - name: Print current working directory
         run: pwd
 
-      - name: List all files in the repository
-        run: ls -laR /home/runner/work/Eside_backend/Eside_backend
+      - name: List all files in the repository root
+        run: ls -laR ${{ github.workspace }}
+
+      - name: List all files in the home directory
+        run: ls -laR /home/runner/
 
       - name: Copy docker-compose file to VPS
         uses: appleboy/scp-action@master
