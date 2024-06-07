@@ -123,6 +123,8 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             mkdir -p ci-cd
+      - name: Print current working directory
+        run: pwd
 
       - name: List files in workspace for debugging
         run: ls -la
