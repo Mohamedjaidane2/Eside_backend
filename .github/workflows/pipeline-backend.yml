@@ -93,34 +93,21 @@ jobs:
           distribution: 'corretto'
 
       # Loop through each module to build Docker images
-      - name: Build Docker images
+      - name: Extract project version
+        id: extract_version
         run: |
           for module in ${{ env.MODULES }}; do
             echo "----------------------------------------------------- $module --------------------------------------------------------------------------"
-            cd $module
             echo "Granting execute permission to mvnw script..."
             chmod +x mvnw  # Grant execute permission to mvnw script
-            module_name=$(basename $module | tr '[:upper:]' '[:lower:]')
-            docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest .
-            docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${module_name}:latest
-            echo "Building Docker image..."
-            echo "Docker image built."
+            cd $module
+            echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
             cd ..
             cd ..
           done
 
-      # Additional steps here (e.g., login to DockerHub, push Docker images, etc.)
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Push Docker images
-        run: |
-          for module in ${{ env.MODULES }}; do
-            echo "Pushing Docker images for $module..."
-            docker push ${{ secrets.DOCKERHUB_USERNAME }}/$module:${{ steps.extract_version.outputs.VERSION }}
-            docker push ${{ secrets.DOCKERHUB_USERNAME }}/$module:latest
-            echo "Docker images pushed for $module."
-          done
