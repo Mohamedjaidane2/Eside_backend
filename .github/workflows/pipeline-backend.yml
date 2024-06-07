@@ -125,4 +125,4 @@ jobs:
             mkdir -p ci-cd
       # Print Docker Compose content from the root directory
       - name: Copy docker-compose file
-        run: scp -p 51830 -oStrictHostKeyChecking=no docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
+        run: scp -o StrictHostKeyChecking=no -P ${{ secrets.VPS_PORT }} docker-compose.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/docker-compose.yml
