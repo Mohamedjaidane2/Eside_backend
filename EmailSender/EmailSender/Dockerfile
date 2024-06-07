@@ -1,7 +1,4 @@
 FROM openjdk:17-jdk
 
-WORKDIR /app
-
-COPY target/EmailSender-0.0.1-SNAPSHOT.jar /app/app.jar
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ADD ./target/EmailSender-*.jar /app/app.jar
+CMD ["java", "-Xmx200m", "-jar", "/app/app.jar","app.jar"]
