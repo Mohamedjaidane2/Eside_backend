@@ -125,17 +125,14 @@ jobs:
             mkdir -p ci-cd
 
       - name: Copy docker-compose file
-        uses: appleboy/ssh-action@master
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           port: ${{ secrets.VPS_PORT }}
-          script: |
-            cd ci-cd
-            cat > ~/ci-cd/docker-compose.yml << 'EOF'
-            $(cat docker-compose.yml)
-            EOF
+          source: 'docker-compose.yml'
+          target: '~/ci-cd/docker-compose.yml'
       - name: Deploy application
         uses: appleboy/ssh-action@master
         with:
