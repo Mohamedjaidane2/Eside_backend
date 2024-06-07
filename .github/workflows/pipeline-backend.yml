@@ -136,4 +136,4 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: ${{ secrets.VPS_PORT }}
           source: "docker-compose.yml"  # Path to your Docker Compose file
-          target: "/path/to/remote/directory"  # Destination directory on the remote server
+          target: "~/ci-cd"  # Destination directory on the remote server
