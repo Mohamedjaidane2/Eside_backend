@@ -104,7 +104,9 @@ jobs:
             echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
             cd ..
             cd ..
-          done         
+          done
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
       - name: Login to DOCKER_HUB
         uses: docker/login-action@v3
@@ -115,8 +117,8 @@ jobs:
       - name: Build & Push to DockerHub
         uses: docker/build-push-action@v5
         with:
-          context: account/account
-          file: Dockerfile
+          context: ./account/account
+          file: ./account/account/Dockerfile
           push: true
           platforms: linux/amd64
           tags: account:latest
