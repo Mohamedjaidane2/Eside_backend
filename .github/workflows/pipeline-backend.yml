@@ -96,8 +96,9 @@ jobs:
             echo "Granting execute permission to mvnw script..."
             chmod +x mvnw  # Grant execute permission to mvnw script
             echo "Building Docker image..."
-            docker build -f docker/backend/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/$module:${{ steps.extract_version.outputs.VERSION }} -t ${{ secrets.DOCKERHUB_USERNAME }}/$module:latest --build-arg PROFILE=prod --build-arg APP_VERSION=${{ steps.extract_version.outputs.VERSION }} .
+            docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/$module:${{ steps.extract_version.outputs.VERSION }} -t ${{ secrets.DOCKERHUB_USERNAME }}/$module:latest --build-arg PROFILE=prod --build-arg APP_VERSION=${{ steps.extract_version.outputs.VERSION }} .
             echo "Docker image built."
+            cd ..
             cd ..
           done
 
