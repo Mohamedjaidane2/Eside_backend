@@ -24,6 +24,3 @@ spring:
     show-sql: true
     open-in-view: false
 
-flickr:
-  apiKey: a502dbde61b387599463907c23e642d9
-  apiSecret: 352dd78e9f5d20df
